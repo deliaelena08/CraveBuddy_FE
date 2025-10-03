@@ -1,7 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Welcome.css';
 
-const Welcome: React.FC = () => {
+export const Welcome: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/auth'); 
+  };
+
   return (
     <section>
       <div className="wave">
@@ -11,10 +18,9 @@ const Welcome: React.FC = () => {
       </div>
       <div className="content">
         <h1>Welcome to CraveBuddy</h1>
-        <button>Get Started</button>
+        <button onClick={handleGetStarted}>Get Started</button>
       </div>
     </section>
   );
 };
 
-export default Welcome;

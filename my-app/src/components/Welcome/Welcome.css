@@ -41,19 +41,19 @@ section {
 
 .wave span:nth-child(1) {
   border-radius: 45%;
-  background: rgba(210, 180, 140, 0.8); /* tan */
+  background: rgba(210, 180, 140, 0.8);
   animation: animate 5s linear infinite;
 }
 
 .wave span:nth-child(2) {
   border-radius: 40%;
-  background: rgba(245, 222, 179, 0.5); /* wheat */
+  background: rgba(245, 222, 179, 0.5); 
   animation: animate 10s linear infinite;
 }
 
 .wave span:nth-child(3) {
   border-radius: 42.5%;
-  background: rgba(255, 239, 213, 0.5); /* papayaWhip */
+  background: rgba(255, 239, 213, 0.5); 
   animation: animate 15s linear infinite;
 }
 
@@ -94,7 +94,6 @@ section {
   background-color: #5d4037;
 }
 
-/* Responsivitate */
 @media (max-width: 768px) {
   .content h1 {
     font-size: 2rem;
@@ -109,4 +108,11 @@ section {
     width: 250vh;
     height: 250vh;
   }
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
 }
