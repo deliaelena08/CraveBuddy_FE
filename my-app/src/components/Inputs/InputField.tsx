@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface InputFieldProps {
   label: string;
@@ -8,9 +8,22 @@ interface InputFieldProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const InputField: React.FC<InputFieldProps> = ({ label, type, name, value, onChange }) => (
+export const InputField: React.FC<InputFieldProps> = ({
+  label,
+  type,
+  name,
+  value,
+  onChange,
+}) => (
   <div className="form-group">
     <label htmlFor={name}>{label}</label>
-    <input type={type} id={name} name={name} value={value} onChange={onChange} required />
+    <input
+      type={type}
+      id={name}
+      name={name}
+      value={value}
+      onChange={onChange}
+      required
+    />
   </div>
 );

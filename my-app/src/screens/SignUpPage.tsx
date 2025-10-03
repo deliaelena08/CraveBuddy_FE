@@ -1,11 +1,10 @@
-import React from 'react';
-import '../components/Welcome/Welcome.css';
+import React from "react";
 import "../components/SignUp/SignUp.css";
-import { SignUpForm } from '../components/SignUp/SignUpForm';
+import { SignUpForm } from "../components/SignUp/SignUpForm";
 
-const SignUpPage: React.FC = () => {
+export const SignUpPage: React.FC = () => {
   return (
-    <section>
+    <section className="form-container">
       <div className="content">
         <h1>Create an Account</h1>
         <SignUpForm />
@@ -13,5 +12,3 @@ const SignUpPage: React.FC = () => {
     </section>
   );
 };
-
-export default SignUpPage;

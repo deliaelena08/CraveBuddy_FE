@@ -1,16 +1,16 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../components/Welcome/Welcome.css'; 
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "../components/Welcome/Welcome.css";
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    navigate('/login');
+    navigate("/login");
   };
 
   const handleSignUp = () => {
-    navigate('/signup');
+    navigate("/signup");
   };
 
   return (
@@ -23,8 +23,12 @@ const AuthPage: React.FC = () => {
       <div className="content">
         <h1>Choose an option</h1>
         <div className="button-group">
-          <button onClick={handleLogin}>Login</button>
-          <button onClick={handleSignUp}>Sign Up</button>
+          <button className="auth-button" onClick={handleLogin}>
+            Login
+          </button>
+          <button className="auth-button" onClick={handleSignUp}>
+            Sign Up
+          </button>
         </div>
       </div>
     </section>

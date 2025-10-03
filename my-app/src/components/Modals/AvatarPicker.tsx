@@ -1,5 +1,5 @@
-import React from 'react';
-import './AvatarPicker.css';
+import React from "react";
+import "./AvatarPicker.css";
 
 interface AvatarPickerProps {
   avatars: string[];
@@ -7,7 +7,11 @@ interface AvatarPickerProps {
   onClose: () => void;
 }
 
-export const AvatarPicker: React.FC<AvatarPickerProps> = ({ avatars, onSelect, onClose }) => {
+export const AvatarPicker: React.FC<AvatarPickerProps> = ({
+  avatars,
+  onSelect,
+  onClose,
+}) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
@@ -23,7 +27,9 @@ export const AvatarPicker: React.FC<AvatarPickerProps> = ({ avatars, onSelect, o
             />
           ))}
         </div>
-        <button onClick={onClose} className="close-button">Close</button>
+        <button onClick={onClose} className="close-button">
+          Close
+        </button>
       </div>
     </div>
   );

@@ -1,12 +1,12 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Welcome.css';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "./Welcome.css";
 
 export const Welcome: React.FC = () => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    navigate('/auth'); 
+    navigate("/auth");
   };
 
   return (
@@ -23,4 +23,3 @@ export const Welcome: React.FC = () => {
     </section>
   );
 };
-
