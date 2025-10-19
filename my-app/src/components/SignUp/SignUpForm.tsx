@@ -4,18 +4,23 @@ import { SelectField } from "../Inputs/SelectField";
 import { AvatarPicker } from "../Modals/AvatarPicker";
 import { avatars } from "../../utils/AvatarList";
 import { DefaultAvatar } from "./DefaultAvatar";
+import { toast } from "react-hot-toast";
+import { userQueryApi } from "../../apis/userQueryApi";
+import { useNavigate } from "react-router-dom";
+import { Language } from "../../entities/user/Language";
 
 export const SignUpForm: React.FC = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    language: "",
-    city: "",
-    avatar: "",
+    language: Language.EN,
+    location: "Cluj-Napoca",
+    icon: "",
   });
 
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
-
+  const [registerUser, { isLoading }] = userQueryApi.useRegisterUserMutation();
+  const navigate = useNavigate();
   const cities = ["Cluj-Napoca", "București", "Timișoara", "Iași", "Constanța"];
   const languages = ["English", "Română"];
 
@@ -27,13 +32,25 @@ export const SignUpForm: React.FC = () => {
   };
 
   const handleAvatarSelect = (avatar: string) => {
-    setFormData((prev) => ({ ...prev, avatar }));
+    setFormData((prev) => ({ ...prev, icon: avatar }));
     setShowAvatarPicker(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitted:", formData);
+
+    try {
+      const result = await registerUser(formData).unwrap();
+      localStorage.setItem("token", result.token);
+      toast.success(
+        `Welcome, ${result.username}! Account created successfully.`
+      );
+      console.log("Register result:", result);
+      navigate("/home-map");
+    } catch (err: any) {
+      console.error("Register failed:", err);
+      toast.error(err?.data?.error || "Registration failed. Please try again.");
+    }
   };
 
   return (
@@ -51,9 +68,9 @@ export const SignUpForm: React.FC = () => {
           className="avatar-display"
           onClick={() => setShowAvatarPicker(true)}
         >
-          {formData.avatar ? (
+          {formData.icon ? (
             <img
-              src={formData.avatar}
+              src={formData.icon}
               alt="Selected avatar"
               className="selected-avatar"
             />
@@ -61,6 +78,7 @@ export const SignUpForm: React.FC = () => {
             <DefaultAvatar />
           )}
         </div>
+
         <InputField
           label="Username"
           type="text"
@@ -84,12 +102,16 @@ export const SignUpForm: React.FC = () => {
         />
         <SelectField
           label="City"
-          name="city"
-          value={formData.city}
+          name="location"
+          value={formData.location}
           options={cities}
           onChange={handleChange}
         />
-        <button type="submit">Sign Up</button>
+
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Registering..." : "Sign Up"}
+        </button>
+
         <p className="signup-hint">
           Already have an account?{" "}
           <a href="/login" className="login-link">

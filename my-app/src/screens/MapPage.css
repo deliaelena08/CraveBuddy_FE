@@ -1,0 +1,57 @@
+.map-page-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background: #fffaf4;
+  position: relative;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 200px; /* fixed width now */
+  background: #f5eee1;
+  border-right: 2px solid #d2b48c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+  z-index: 1000;
+}
+
+/* Menu inside sidebar */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  align-items: center;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #4e342e;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+  padding: 0.5rem 1rem;
+  width: 90%;
+  border-radius: 8px;
+}
+
+.menu-item:hover {
+  background: #d2b48c;
+  color: white;
+}
+
+.menu-item span {
+  opacity: 1; /* always visible */
+}
+
+/* Map should take remaining space */
+.leaflet-container {
+  flex: 1; /* take all remaining width */
+  height: 100%;
+}

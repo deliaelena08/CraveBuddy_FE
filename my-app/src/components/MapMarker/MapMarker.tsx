@@ -1,0 +1,25 @@
+import React from "react";
+import { Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "./MapMarker.css";
+
+interface MapMarkerProps {
+  position: { lat: number; lng: number };
+}
+
+export const MapMarker: React.FC<MapMarkerProps> = ({ position }) => {
+  const customIcon = L.divIcon({
+    html: `<div class="custom-marker">📍</div>`,
+    iconSize: [40, 40],
+    className: "",
+  });
+
+  return (
+    <Marker position={position} icon={customIcon}>
+      <Popup>
+        <b>Ești aici:</b> <br />
+        Cluj-Napoca, România
+      </Popup>
+    </Marker>
+  );
+};
