@@ -6,9 +6,8 @@
   position: relative;
 }
 
-/* Sidebar */
 .sidebar {
-  width: 200px; /* fixed width now */
+  width: 200px;
   background: #f5eee1;
   border-right: 2px solid #d2b48c;
   display: flex;
@@ -18,7 +17,6 @@
   z-index: 1000;
 }
 
-/* Menu inside sidebar */
 .menu {
   display: flex;
   flex-direction: column;
@@ -47,11 +45,42 @@
 }
 
 .menu-item span {
-  opacity: 1; /* always visible */
+  opacity: 1;
 }
 
-/* Map should take remaining space */
+.bakery-marker {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 0 3px #a67b5b);
+}
+
+.leaflet-popup-content-wrapper {
+  background: #fffaf3;
+  border-radius: 10px;
+  color: #4e342e;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(139, 94, 60, 0.3);
+}
+
 .leaflet-container {
-  flex: 1; /* take all remaining width */
-  height: 100%;
+  z-index: 1;
+}
+
+.leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-tip {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.leaflet-popup {
+  bottom: 35px !important;
 }

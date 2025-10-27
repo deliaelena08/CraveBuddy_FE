@@ -17,7 +17,7 @@ export const MapMarker: React.FC<MapMarkerProps> = ({ position }) => {
   return (
     <Marker position={position} icon={customIcon}>
       <Popup>
-        <b>Ești aici:</b> <br />
+        <b>Esti aici:</b> <br />
         Cluj-Napoca, România
       </Popup>
     </Marker>

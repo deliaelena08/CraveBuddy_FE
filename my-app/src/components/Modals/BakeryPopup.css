@@ -1,0 +1,103 @@
+.bakery-popup-container {
+  background: #fffaf4;
+  color: #5d4037;
+  border-radius: 14px;
+  padding: 0.9rem 1.1rem;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(109, 76, 65, 0.25);
+  min-width: 160px;
+  max-width: 250px;
+  width: fit-content;
+  transition: all 0.3s ease;
+}
+
+.bakery-popup-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #4e342e;
+  margin-bottom: 0.4rem;
+}
+
+.bakery-popup-address,
+.bakery-popup-city {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #6d4c41;
+  line-height: 1.3;
+}
+
+.bakery-popup-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.bakery-popup-button.see-menu {
+  background: #d7b49e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: background 0.25s, transform 0.1s;
+}
+
+.bakery-popup-button.see-menu:hover {
+  background: #b99470;
+  transform: translateY(-1px);
+}
+
+.bakery-popup-star {
+  position: absolute;
+  top: 0px;
+  left: 15px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #cbb59c;
+  cursor: pointer;
+  transition: transform 0.15s, color 0.25s;
+  z-index: 2;
+}
+
+.bakery-popup-star:hover {
+  transform: scale(1.15);
+}
+
+.bakery-popup-star.favourite {
+  color: #d7b49e;
+}
+
+.bakery-popup-container {
+  position: relative;
+}
+
+@media (max-width: 600px) {
+  .bakery-popup-container {
+    padding: 0.6rem 0.8rem;
+    min-width: 130px;
+    max-width: 200px;
+    font-size: 0.85rem;
+  }
+
+  .bakery-popup-title {
+    font-size: 0.95rem;
+  }
+
+  .bakery-popup-buttons {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .bakery-popup-button.see-menu {
+    width: 100%;
+  }
+
+  .bakery-popup-star {
+    font-size: 1.3rem;
+  }
+}

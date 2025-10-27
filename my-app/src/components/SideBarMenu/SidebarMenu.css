@@ -4,8 +4,8 @@
   left: 0;
   height: 100%;
   width: 220px;
-  background-color: #f5eee1; /* beige */
-  border-right: 1px solid #d2b48c; /* brown accent */
+  background-color: #f5eee1;
+  border-right: 1px solid #d2b48c;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -16,7 +16,7 @@
 }
 
 .sidebar.collapsed {
-  width: 60px; /* collapsed width */
+  width: 60px;
 }
 
 .sidebar-toggle {
@@ -31,7 +31,7 @@
 }
 
 .sidebar-toggle:hover {
-  background-color: #e0dcd0; /* light beige hover */
+  background-color: #e0dcd0;
 }
 
 .menu {
@@ -64,9 +64,9 @@
 }
 
 .sidebar.collapsed .menu-item .label {
-  display: none; /* hide text when collapsed */
+  display: none;
 }
 
 .sidebar.collapsed .menu-item {
-  justify-content: center; /* center icons in collapsed mode */
+  justify-content: center;
 }
