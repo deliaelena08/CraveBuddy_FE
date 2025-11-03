@@ -5,6 +5,7 @@ import { LoginPage } from "./screens/LogInPage";
 import { SignUpPage } from "./screens/SignUpPage";
 import { Toaster } from "react-hot-toast";
 import { MapPage } from "./screens/MapPage";
+import { Chatbot } from "./components/ChatBot/ChatBot";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/home-map" element={<MapPage />} />
+        <Route path="/chatbot" element={<Chatbot />} />
       </Routes>
     </>
   );
