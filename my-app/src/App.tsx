@@ -4,8 +4,10 @@ import AuthPage from "./screens/AuthPage";
 import { LoginPage } from "./screens/LogInPage";
 import { SignUpPage } from "./screens/SignUpPage";
 import { Toaster } from "react-hot-toast";
-import { MapPage } from "./screens/MapPage";
 import { Chatbot } from "./components/ChatBot/ChatBot";
+import { MenuPage } from "./screens/MenuItemPage/MenuItemPage";
+import { MapPage } from "./screens/MapPage";
+import { SettingsPage } from "./screens/SettingsPage/SettingsPage";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/home-map" element={<MapPage />} />
         <Route path="/chatbot" element={<Chatbot />} />
+        <Route path="/menu/:bakeryId" element={<MenuPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </>
   );

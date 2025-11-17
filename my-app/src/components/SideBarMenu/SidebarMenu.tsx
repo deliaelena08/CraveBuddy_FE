@@ -32,6 +32,9 @@ export const SidebarMenu: React.FC = () => {
   const handleChatBot = () => {
     navigate("/chatbot");
   };
+  const handleSettings = () => {
+    navigate("/settings");
+  };
 
   return (
     <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
@@ -52,7 +55,7 @@ export const SidebarMenu: React.FC = () => {
           <BellOutlined className="icon" />
           <span className="label">Notification</span>
         </div>
-        <div className="menu-item" title="Settings">
+        <div className="menu-item" title="Settings" onClick={handleSettings}>
           <SettingOutlined className="icon" />
           <span className="label">Settings</span>
         </div>
