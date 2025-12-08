@@ -3,7 +3,6 @@ import { Welcome } from "./components/Welcome/Welcome";
 import AuthPage from "./screens/AuthPage";
 import { LoginPage } from "./screens/LogInPage";
 import { SignUpPage } from "./screens/SignUpPage";
-import { Toaster } from "react-hot-toast";
 import { Chatbot } from "./components/ChatBot/ChatBot";
 import { MenuPage } from "./screens/MenuItemPage/MenuItemPage";
 import { MapPage } from "./screens/MapPage";
@@ -12,7 +11,6 @@ import { SettingsPage } from "./screens/SettingsPage/SettingsPage";
 function App() {
   return (
     <>
-      <Toaster position="top-right" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/auth" element={<AuthPage />} />

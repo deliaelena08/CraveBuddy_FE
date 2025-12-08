@@ -16,5 +16,13 @@ export const apiSlice = createApi({
     credentials: "include",
   }),
   endpoints: () => ({}),
-  tagTypes: ["users", "login", "bakeries", "cakes", "menuitems"],
+  tagTypes: [
+    "users",
+    "login",
+    "bakeries",
+    "cakes",
+    "menuitems",
+    "favourites",
+    "notifications",
+  ],
 });

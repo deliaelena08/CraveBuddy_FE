@@ -4,10 +4,10 @@ import { SelectField } from "../Inputs/SelectField";
 import { AvatarPicker } from "../Modals/AvatarPicker";
 import { avatars } from "../../utils/AvatarList";
 import { DefaultAvatar } from "./DefaultAvatar";
-import { toast } from "react-hot-toast";
 import { userQueryApi } from "../../apis/userQueryApi";
 import { useNavigate } from "react-router-dom";
 import { Language } from "../../entities/user/Language";
+import { useNotificationSystem } from "../../utils/useNotificationSystem";
 
 export const SignUpForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -30,6 +30,7 @@ export const SignUpForm: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  const { notify } = useNotificationSystem();
 
   const handleAvatarSelect = (avatar: string) => {
     setFormData((prev) => ({ ...prev, icon: avatar }));
@@ -42,14 +43,15 @@ export const SignUpForm: React.FC = () => {
     try {
       const result = await registerUser(formData).unwrap();
       localStorage.setItem("token", result.token);
-      toast.success(
-        `Welcome, ${result.username}! Account created successfully.`
+      notify(
+        `Welcome, ${result.username}! Account created successfully.`,
+        "success"
       );
       console.log("Register result:", result);
       navigate("/home-map");
     } catch (err: any) {
       console.error("Register failed:", err);
-      toast.error(err?.data?.error || "Registration failed. Please try again.");
+      notify("Registration failed. Please try again.", "error");
     }
   };
 

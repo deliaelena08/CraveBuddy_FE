@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { InputField } from "../Inputs/InputField";
-import { toast } from "react-hot-toast";
 import { userQueryApi } from "../../apis/userQueryApi";
 import { useNavigate } from "react-router-dom";
+import { useNotificationSystem } from "../../utils/useNotificationSystem";
 
 export const LoginForm: React.FC = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+  const { notify } = useNotificationSystem();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -16,6 +17,7 @@ export const LoginForm: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
   const navigate = useNavigate();
   const [loginUser, { isLoading }] = userQueryApi.useLoginUserMutation();
 
@@ -23,12 +25,15 @@ export const LoginForm: React.FC = () => {
     e.preventDefault();
     try {
       const result = await loginUser(formData).unwrap();
+
       localStorage.setItem("token", result.token);
-      toast.success(`Welcome, ${result.username}! Login successful.`);
+      const userToSave = { id: result.id, username: result.username };
+      localStorage.setItem("user", JSON.stringify(userToSave));
+      notify(`Welcome, ${result.username}!`, "success");
       navigate("/home-map");
     } catch (err: any) {
       console.error("Login failed:", err);
-      toast.error(err?.data?.error || "Login failed. Please try again.");
+      notify("Login failed. Please try again.", "error");
     }
   };
 

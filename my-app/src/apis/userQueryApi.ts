@@ -11,6 +11,12 @@ export const userQueryApi = apiSlice.injectEndpoints({
       query: () => usersBaseUrl,
       providesTags: ["users"],
     }),
+
+    getUserById: builder.query<UserDto, number>({
+      query: (id) => `${usersBaseUrl}/${id}`,
+      providesTags: (result, error, id) => [{ type: "users", id }],
+    }),
+
     loginUser: builder.mutation<UserLoginResponse, UserLoginDto>({
       query: (user: UserLoginDto) => ({
         url: "/login",
@@ -28,6 +34,27 @@ export const userQueryApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["users"],
     }),
+
+    updateUser: builder.mutation<UserDto, { id: number; data: UserDto }>({
+      query: ({ id, data }) => ({
+        url: `${usersBaseUrl}/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "users", id },
+        "users",
+      ],
+    }),
+
+    deleteUser: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `${usersBaseUrl}/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["users"],
+    }),
+
     logoutUser: builder.mutation<{ message: string }, void>({
       query: () => ({
         url: "/logout",
@@ -36,3 +63,13 @@ export const userQueryApi = apiSlice.injectEndpoints({
     }),
   }),
 });
+
+export const {
+  useGetUsersQuery,
+  useGetUserByIdQuery,
+  useLoginUserMutation,
+  useRegisterUserMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+  useLogoutUserMutation,
+} = userQueryApi;

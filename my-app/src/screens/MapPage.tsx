@@ -6,15 +6,43 @@ import "./MapPage.css";
 import { SidebarMenu } from "../components/SideBarMenu/SideBarMenu";
 import { MapMarker } from "../components/MapMarker/MapMarker";
 import { useGetBakeriesQuery } from "../apis/bakeryQueryApi";
+import { useGetFavouritesByUserIdQuery } from "../apis/favouriteQueryApi";
 import { BakeryDto } from "../entities/bakery/BakeryDto";
 import bakeryIconPng from "../assets/cake.png";
 import { BakeryPopup } from "../components/Modals/BakeryPopup";
-
+import { UserDto } from "../entities/user/UserDTO";
+import { Toaster } from "react-hot-toast";
+import { useGetNotificationsQuery } from "../apis/notificationQueryApi";
+import { NotificationModal } from "../components/Modals/NotificationModal";
 const defaultPosition = { lat: 46.7712, lng: 23.6236 };
 
 export const MapPage: React.FC = () => {
   const [position, setPosition] = useState(defaultPosition);
+  const [showFavouritesOnly, setShowFavouritesOnly] = useState(false);
+  const userStr = localStorage.getItem("user");
+  const storedUser = userStr ? JSON.parse(userStr) : null;
+  const userId = storedUser?.id;
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  const { data: notificationList = [] } = useGetNotificationsQuery(userId!, {
+    skip: !userId,
+  });
+
+  const currentUser: UserDto = storedUser
+    ? ({
+        id: storedUser.id,
+        username: storedUser.username,
+        role: "USER",
+        language: "RO",
+        location: "",
+        password: "",
+      } as unknown as UserDto)
+    : ({} as UserDto);
+
   const { data: bakeries = [] } = useGetBakeriesQuery();
+  const { data: favourites = [] } = useGetFavouritesByUserIdQuery(userId!, {
+    skip: !userId,
+  });
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -35,9 +63,35 @@ export const MapPage: React.FC = () => {
     popupAnchor: [0, -36],
   });
 
+  const displayedBakeries = showFavouritesOnly
+    ? bakeries.filter((b) => favourites.some((fav) => fav.bakery.id === b.id))
+    : bakeries;
+
   return (
     <div className="map-page-container">
-      <SidebarMenu />
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        containerStyle={{
+          top: 40,
+          left: 20,
+          bottom: 20,
+          right: 20,
+          zIndex: 99999,
+        }}
+      />
+
+      <SidebarMenu
+        onToggleFavourites={() => setShowFavouritesOnly(!showFavouritesOnly)}
+        isShowingFavourites={showFavouritesOnly}
+        onToggleNotifications={() => setShowNotifications(!showNotifications)}
+      />
+
+      <NotificationModal
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        notifications={notificationList}
+      />
 
       <MapContainer
         center={position}
@@ -47,22 +101,32 @@ export const MapPage: React.FC = () => {
       >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+          attribution='© <a href="https://carto.com/">CARTO</a>'
         />
 
         <MapMarker position={position} />
 
-        {bakeries.map((b: BakeryDto) => (
-          <Marker
-            key={b.id}
-            position={{ lat: b.longitude, lng: b.latitude }}
-            icon={bakeryIcon}
-          >
-            <Popup>
-              <BakeryPopup bakery={b} />
-            </Popup>
-          </Marker>
-        ))}
+        {displayedBakeries.map((b: BakeryDto) => {
+          const userFavourite = favourites.find(
+            (fav) => fav.bakery.id === b.id
+          );
+
+          return (
+            <Marker
+              key={b.id}
+              position={{ lat: b.longitude, lng: b.latitude }}
+              icon={bakeryIcon}
+            >
+              <Popup>
+                <BakeryPopup
+                  bakery={b}
+                  user={currentUser}
+                  existingFavourite={userFavourite}
+                />
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
     </div>
   );

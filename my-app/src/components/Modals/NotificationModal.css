@@ -1,0 +1,72 @@
+.notification-modal-overlay {
+  position: absolute;
+  top: 20px;
+  left: 80px;
+  z-index: 2000;
+}
+
+.notification-modal {
+  background-color: #f5eee1;
+  border: 2px solid #d2b48c;
+  border-radius: 12px;
+  width: 300px;
+  max-height: 400px;
+  box-shadow: 0 8px 16px rgba(78, 52, 46, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.notification-header {
+  background-color: #d2b48c;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+}
+
+.notification-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #4e342e;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #4e342e;
+  font-size: 1rem;
+}
+
+.notification-list {
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  background-color: white;
+  border: 1px solid #e0dcd0;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+.notif-message {
+  color: #4e342e;
+  margin: 0 0 5px 0;
+  font-size: 0.9rem;
+}
+
+.notif-date {
+  font-size: 0.75rem;
+  color: #8c8c8c;
+}
+
+.no-notif {
+  text-align: center;
+  color: #8c8c8c;
+  padding: 20px;
+}

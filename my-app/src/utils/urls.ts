@@ -4,3 +4,4 @@ export const cakeBaseUrl = "cakes";
 export const bakeriesBaseUrl = "bakeries";
 export const menuItemsBaseUrl = "menuitems";
 export const feedbackBaseUrl = "feedbacks";
+export const favouriteBaseUrl = "favourites";
