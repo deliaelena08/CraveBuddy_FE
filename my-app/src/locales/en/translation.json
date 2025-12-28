@@ -64,5 +64,16 @@
   "app_name": "Bakery Finder",
   "version": "Version",
   "all_notifications": "All Notifications",
-  "save_preferences": "Save Preferences"
+  "save_preferences": "Save Preferences",
+  "chatbot_welcome": "Hi! I'm CraveBuddy. What are you craving today? (e.g., something sweet with chocolate)",
+  "chatbot_ask_allergies": "Got it. Do you have any allergies I should know about? (type 'no' or list: nuts, gluten etc.)",
+  "chatbot_results_found": "Here is what I found based on your cravings:",
+  "chatbot_no_results": "I couldn't find anything matching your criteria (maybe due to allergens).",
+  "chatbot_error_generic": "I'm sorry, I encountered a technical error.",
+  "chatbot_error_sync": "AI Server needs synchronization (restart sync_bridge.py).",
+  "chatbot_restart": "Let's start over! What are you craving?",
+  "match_score": "Match",
+  "find_location": "Find Location",
+  "placeholder_allergies": "Type allergies or 'no'...",
+  "placeholder_cravings": "Type your craving..."
 }

@@ -63,5 +63,16 @@
   "app_name": "Bakery Finder",
   "version": "Versiune",
   "all_notifications": "Toate notificările",
-  "save_preferences": "Salvează Preferințele"
+  "save_preferences": "Salvează Preferințele",
+  "chatbot_welcome": "Salut! Sunt CraveBuddy. Ce pofte ai astăzi? (ex: ceva dulce cu ciocolată)",
+  "chatbot_ask_allergies": "Am înțeles. Ai vreo alergie de care să țin cont? (scrie 'nu' sau lista: nuci, gluten etc.)",
+  "chatbot_results_found": "Iată ce ți-am găsit pe baza poftelor tale:",
+  "chatbot_no_results": "Nu am găsit nimic care să corespundă criteriilor (poate din cauza alergenilor).",
+  "chatbot_error_generic": "Îmi pare rău, am întâmpinat o eroare tehnică.",
+  "chatbot_error_sync": "Serverul AI trebuie sincronizat (repornește sync_bridge.py).",
+  "chatbot_restart": "O luăm de la capăt! Ce pofte ai?",
+  "match_score": "Match",
+  "find_location": "Vezi Locația",
+  "placeholder_allergies": "Scrie alergeni sau 'nu'...",
+  "placeholder_cravings": "Scrie ce poftești..."
 }
