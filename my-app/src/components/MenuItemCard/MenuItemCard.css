@@ -55,6 +55,10 @@
   background: #f5eee1;
   padding: 1rem;
   border-radius: 10px;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .ingredients-label {
@@ -66,26 +70,31 @@
 }
 
 .ingredients-text {
-  margin: 0.5rem 0 0 0;
-  font-size: 1rem;
+  margin: 0;
+  font-size: 0.95rem;
   color: #5d4037;
-  line-height: 1.6;
+  line-height: 1.5;
+  overflow: hidden;
 }
 
 .see-more-btn {
   background: none;
   border: none;
   color: #b99470;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  margin-left: 0.5rem;
-  text-decoration: underline;
-  font-size: 0.95rem;
+  padding: 0;
+  margin-top: 0.5rem;
+  text-decoration: none;
+  font-size: 0.9rem;
   transition: color 0.2s;
+  align-self: flex-start;
+  display: inline-block;
 }
 
 .see-more-btn:hover {
-  color: #8b6f47;
+  color: #6d4c41;
+  text-decoration: underline;
 }
 
 .menu-item-details {

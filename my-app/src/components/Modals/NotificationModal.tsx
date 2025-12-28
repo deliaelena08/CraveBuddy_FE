@@ -2,6 +2,7 @@ import React from "react";
 import "./NotificationModal.css";
 import { NotificationDto } from "../../entities/notification/NotificationDto";
 import { CloseOutlined, BellFilled } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 interface NotificationModalProps {
   isOpen: boolean;
@@ -14,6 +15,8 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
   onClose,
   notifications,
 }) => {
+  const { t, i18n } = useTranslation();
+
   if (!isOpen) return null;
 
   return (
@@ -22,7 +25,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
         <div className="notification-header">
           <h3>
             <BellFilled style={{ marginRight: 8, color: "#4e342e" }} />
-            Notifications
+            {t("notifications_title")}
           </h3>
           <button onClick={onClose} className="close-btn">
             <CloseOutlined />
@@ -31,13 +34,13 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
 
         <div className="notification-list">
           {notifications.length === 0 ? (
-            <p className="no-notif">No new notifications.</p>
+            <p className="no-notif">{t("no_notifications")}</p>
           ) : (
             notifications.map((notif) => (
               <div key={notif.id} className="notification-item">
                 <p className="notif-message">{notif.message}</p>
                 <span className="notif-date">
-                  {new Date(notif.createdAt).toLocaleDateString()}
+                  {new Date(notif.createdAt).toLocaleDateString(i18n.language)}
                 </span>
               </div>
             ))

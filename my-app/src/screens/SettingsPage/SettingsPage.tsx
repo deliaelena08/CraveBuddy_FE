@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import "./SettingsPage.css";
-
+import { useTranslation } from "react-i18next";
 import { SettingsMenu } from "./SettingsMenu";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { PreferencesForm } from "./PreferencesForm";
@@ -37,6 +37,7 @@ export const SettingsPage: React.FC = () => {
   const [currentSection, setCurrentSection] = useState<SettingsSection>("main");
   const navigate = useNavigate();
   const [userId, setUserId] = useState<number | null>(null);
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -63,8 +64,16 @@ export const SettingsPage: React.FC = () => {
 
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
   const [deleteUser] = useDeleteUserMutation();
-
   const goBack = () => setCurrentSection("main");
+
+  useEffect(() => {
+    if (userData?.language) {
+      const backendLang = userData.language.toLowerCase();
+      if (i18n.language !== backendLang) {
+        i18n.changeLanguage(backendLang);
+      }
+    }
+  }, [userData, i18n]);
 
   const handleSaveProfile = async (updatedData: ProfileData) => {
     if (!userId || !userData) return;
@@ -146,13 +155,17 @@ export const SettingsPage: React.FC = () => {
       return <SupportSection onBack={goBack} />;
     case "about":
       return <AboutSection onBack={goBack} />;
-
     case "main":
     default:
       return (
         <SettingsMenu
           onNavigate={setCurrentSection}
           onDeleteAccount={handleDeleteAccount}
+          userProfile={{
+            name: userData?.username || "",
+            subtitle: userData?.location || "",
+            icon: userData?.icon || "",
+          }}
         />
       );
   }

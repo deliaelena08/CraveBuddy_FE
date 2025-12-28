@@ -12,6 +12,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import "./SidebarMenu.css";
 import { userQueryApi } from "../../apis/userQueryApi";
+import { useTranslation } from "react-i18next";
 
 interface SidebarMenuProps {
   onToggleFavourites?: () => void;
@@ -28,6 +29,8 @@ export const SidebarMenu: React.FC<SidebarMenuProps> = ({
   const [logoutUser] = userQueryApi.useLogoutUserMutation();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { t } = useTranslation();
 
   const handleLogout = async () => {
     try {
@@ -55,16 +58,16 @@ export const SidebarMenu: React.FC<SidebarMenuProps> = ({
       <div className="menu">
         <div
           className={`menu-item ${isActive("/chatbot") ? "active" : ""}`}
-          title="Chatbot"
+          title={t("chatbot")}
           onClick={() => navigate("/chatbot")}
         >
           <MessageOutlined className="icon" />
-          <span className="label">Chatbot</span>
+          <span className="label">{t("chatbot")}</span>
         </div>
 
         <div
           className={`menu-item ${isShowingFavourites ? "active" : ""}`}
-          title="Favourites"
+          title={t("favourites")}
           onClick={onToggleFavourites}
         >
           {isShowingFavourites ? (
@@ -72,30 +75,30 @@ export const SidebarMenu: React.FC<SidebarMenuProps> = ({
           ) : (
             <HeartOutlined className="icon" />
           )}
-          <span className="label">Favourites</span>
+          <span className="label">{t("favourites")}</span>
         </div>
 
         <div
           className="menu-item"
-          title="Notification"
+          title={t("notifications_title")}
           onClick={onToggleNotifications}
         >
           <BellOutlined className="icon" />
-          <span className="label">Notification</span>
+          <span className="label">{t("notifications_title")}</span>
         </div>
 
         <div
           className={`menu-item ${isActive("/settings") ? "active" : ""}`}
-          title="Settings"
+          title={t("settings_title")}
           onClick={() => navigate("/settings")}
         >
           <SettingOutlined className="icon" />
-          <span className="label">Settings</span>
+          <span className="label">{t("settings_title")}</span>
         </div>
 
-        <div className="menu-item" title="Logout" onClick={handleLogout}>
+        <div className="menu-item" title={t("logout")} onClick={handleLogout}>
           <LogoutOutlined className="icon" />
-          <span className="label">Logout</span>
+          <span className="label">{t("logout")}</span>
         </div>
       </div>
     </div>

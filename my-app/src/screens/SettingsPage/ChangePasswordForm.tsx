@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { ArrowLeft, Lock } from "lucide-react";
 import { InputField } from "../../components/Inputs/InputField";
+import { useTranslation } from "react-i18next";
+
 interface ChangePasswordFormProps {
   onBack: () => void;
 }
@@ -8,6 +10,8 @@ interface ChangePasswordFormProps {
 export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
   onBack,
 }) => {
+  const { t } = useTranslation();
+
   const [passwords, setPasswords] = useState({
     current: "",
     new: "",
@@ -20,11 +24,11 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
 
   const handleSubmit = () => {
     if (passwords.new !== passwords.confirm) {
-      alert("Passwords don't match!");
+      alert(t("passwords_no_match"));
       return;
     }
     console.log("Change password logic here");
-    alert("Password updated!");
+    alert(t("password_updated_success"));
     onBack();
   };
 
@@ -34,25 +38,25 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         <button className="back-button" onClick={onBack}>
           <ArrowLeft size={20} />
         </button>
-        <h2>Change Password</h2>
+        <h2>{t("change_password")}</h2>
       </div>
       <div className="settings-form">
         <InputField
-          label="Current Password"
+          label={t("current_password")}
           type="password"
           name="current"
           value={passwords.current}
           onChange={handleChange}
         />
         <InputField
-          label="New Password"
+          label={t("new_password")}
           type="password"
           name="new"
           value={passwords.new}
           onChange={handleChange}
         />
         <InputField
-          label="Confirm New Password"
+          label={t("confirm_new_password")}
           type="password"
           name="confirm"
           value={passwords.confirm}
@@ -61,7 +65,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
 
         <button className="save-button" onClick={handleSubmit}>
           <Lock size={18} />
-          Update Password
+          {t("update_password_btn")}
         </button>
       </div>
     </div>

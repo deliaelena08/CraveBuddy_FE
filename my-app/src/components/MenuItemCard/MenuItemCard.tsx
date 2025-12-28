@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./MenuItemCard.css";
 import { MenuItemDto } from "../../entities/menuItem/MenuItemDto";
+import { useTranslation } from "react-i18next";
 
 interface MenuItemCardProps {
   menuItem: MenuItemDto;
@@ -19,7 +20,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ menuItem }) => {
     menuItem.cake.flavour &&
     menuItem.cake.flavour.trim().length > 0 &&
     menuItem.cake.flavour != null;
-
+  const { t } = useTranslation();
   const shouldTruncate =
     hasIngredients && menuItem.cake.ingredients.length > 60;
 
@@ -52,7 +53,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ menuItem }) => {
       <div className="menu-item-body">
         {hasIngredients && (
           <div className="menu-item-ingredients">
-            <span className="ingredients-label">Ingredients:</span>
+            <span className="ingredients-label">{t("ingredients")}:</span>
             <p className="ingredients-text">
               {displayIngredients}
               {shouldTruncate && (
@@ -60,7 +61,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ menuItem }) => {
                   className="see-more-btn"
                   onClick={() => setShowFullIngredients(!showFullIngredients)}
                 >
-                  {showFullIngredients ? "See less" : "See more"}
+                  {showFullIngredients ? t("see_less") : t("see_more")}
                 </button>
               )}
             </p>
@@ -71,14 +72,14 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ menuItem }) => {
           <div className="menu-item-details">
             {hasQuantity && (
               <div className="detail-item">
-                <span className="detail-label">Quantity:</span>
+                <span className="detail-label">{t("quantity")}:</span>
                 <span className="detail-value">{menuItem.quantity}g</span>
               </div>
             )}
 
             {hasSweetness && (
               <div className="detail-item">
-                <span className="detail-label">Sweetness:</span>
+                <span className="detail-label">{t("sweetness")}:</span>
                 <div className="sweetness-rating">
                   {renderStars(menuItem.cake.sweetness)}
                   <span className="rating-number">
@@ -95,13 +96,13 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ menuItem }) => {
             <div className="footer-info">
               {hasTexture && (
                 <span className="info-item">
-                  <span className="info-label">Texture:</span>{" "}
+                  <span className="info-label">{t("texture")}:</span>{" "}
                   {menuItem.cake.flavour}
                 </span>
               )}
               {hasFlavour && (
                 <span className="info-item">
-                  <span className="info-label">Flavour:</span>{" "}
+                  <span className="info-label">{t("flavour")}:</span>{" "}
                   {menuItem.cake.texture}
                 </span>
               )}

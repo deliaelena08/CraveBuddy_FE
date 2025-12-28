@@ -7,6 +7,7 @@ import { DefaultAvatar } from "../../components/SignUp/DefaultAvatar";
 import { InputField } from "../../components/Inputs/InputField";
 import { SelectField } from "../../components/Inputs/SelectField";
 import { Language } from "../../entities/user/Language";
+import { useTranslation } from "react-i18next";
 
 export interface ProfileData {
   username: string;
@@ -28,6 +29,7 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
 }) => {
   const [formData, setFormData] = useState<ProfileData>(initialData);
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const cities = ["Cluj-Napoca", "București", "Timișoara", "Iași", "Constanța"];
   const languagesDisplay = ["English", "Română"];
@@ -36,8 +38,11 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+
     if (name === "language") {
       const selectedLanguage = value === "Română" ? Language.RO : Language.EN;
+      const langCode = selectedLanguage === Language.RO ? "ro" : "en";
+      i18n.changeLanguage(langCode);
 
       setFormData((prev) => ({ ...prev, language: selectedLanguage }));
     } else {
@@ -90,12 +95,12 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
               <Camera size={20} color="white" />
             </div>
           </div>
-          <p className="avatar-hint">Tap to change profile picture</p>
+          <p className="avatar-hint">{t("select_avatar")}</p>
         </div>
 
         <div className="form-fields">
           <InputField
-            label="Username"
+            label={t("username")}
             type="text"
             name="username"
             value={formData.username}
@@ -103,7 +108,7 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
           />
 
           <SelectField
-            label="City"
+            label={t("city")}
             name="location"
             value={formData.location}
             options={cities}
@@ -111,7 +116,7 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
           />
 
           <SelectField
-            label="Language"
+            label={t("language_label")}
             name="language"
             value={getCurrentLanguageDisplay()}
             options={languagesDisplay}
@@ -121,7 +126,7 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
 
         <button type="submit" className="save-profile-btn" disabled={isLoading}>
           <Save size={18} />
-          {isLoading ? "Saving..." : "Save Changes"}
+          {isLoading ? t("saving") : t("save")}
         </button>
       </form>
     </>

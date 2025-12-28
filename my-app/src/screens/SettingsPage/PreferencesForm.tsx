@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowLeft, Save } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface PreferencesFormProps {
   onBack: () => void;
 }
 
 export const PreferencesForm: React.FC<PreferencesFormProps> = ({ onBack }) => {
+  const { t, i18n } = useTranslation();
+
   const [settings, setSettings] = useState({
-    language: "en",
+    language: i18n.language.startsWith("ro") ? "ro" : "en",
     distanceUnit: "km",
     searchRadius: 10,
     notifications: true,
@@ -16,8 +19,22 @@ export const PreferencesForm: React.FC<PreferencesFormProps> = ({ onBack }) => {
     showClosed: false,
   });
 
+  useEffect(() => {
+    setSettings((prev) => ({
+      ...prev,
+      language: i18n.language.startsWith("ro") ? "ro" : "en",
+    }));
+  }, [i18n.language]);
+
   const handleToggle = (key: keyof typeof settings) => {
     setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLang = e.target.value;
+    i18n.changeLanguage(newLang);
+
+    setSettings({ ...settings, language: newLang });
   };
 
   return (
@@ -26,17 +43,12 @@ export const PreferencesForm: React.FC<PreferencesFormProps> = ({ onBack }) => {
         <button className="back-button" onClick={onBack}>
           <ArrowLeft size={20} />
         </button>
-        <h2>Preferences</h2>
+        <h2>{t("preferences")}</h2>
       </div>
       <div className="settings-form">
         <div className="form-group">
-          <label>Language</label>
-          <select
-            value={settings.language}
-            onChange={(e) =>
-              setSettings({ ...settings, language: e.target.value })
-            }
-          >
+          <label>{t("language_label")}</label>
+          <select value={settings.language} onChange={handleLanguageChange}>
             <option value="en">English</option>
             <option value="ro">Română</option>
           </select>
@@ -44,7 +56,7 @@ export const PreferencesForm: React.FC<PreferencesFormProps> = ({ onBack }) => {
 
         <div className="toggle-group">
           <div className="toggle-item">
-            <span>All Notifications</span>
+            <span>{t("all_notifications")}</span>
             <label className="toggle">
               <input
                 type="checkbox"
@@ -60,11 +72,11 @@ export const PreferencesForm: React.FC<PreferencesFormProps> = ({ onBack }) => {
           className="save-button"
           onClick={() => {
             console.log(settings);
-            alert("Saved!");
+            alert(t("saved_alert"));
           }}
         >
           <Save size={18} />
-          Save Preferences
+          {t("save_preferences")}
         </button>
       </div>
     </div>

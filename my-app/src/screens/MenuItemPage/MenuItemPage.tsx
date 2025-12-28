@@ -5,10 +5,14 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MenuItemDto } from "../../entities/menuItem/MenuItemDto";
 import { useGetMenuItemsByBakeryIdQuery } from "../../apis/menuItemQueryApi";
 import { MenuItemCard } from "../../components/MenuItemCard/MenuItemCard";
+import { useTranslation } from "react-i18next";
 
 export const MenuPage: React.FC = () => {
   const { bakeryId } = useParams<{ bakeryId: string }>();
   const parsedBakeryId = bakeryId ? parseInt(bakeryId, 10) : undefined;
+
+  const { t } = useTranslation();
+
   const {
     data: menuItems,
     isLoading,
@@ -37,7 +41,7 @@ export const MenuPage: React.FC = () => {
     return (
       <div className="menu-page">
         <div className="error-container">
-          <p>The bakery wasn't selected.</p>
+          <p>{t("error_bakery_not_selected")}</p>
         </div>
       </div>
     );
@@ -48,7 +52,7 @@ export const MenuPage: React.FC = () => {
       <div className="menu-page">
         <div className="loading-container">
           <div className="loading-spinner" />
-          <p>Loading menu items...</p>
+          <p>{t("loading_menu")}</p>
         </div>
       </div>
     );
@@ -58,7 +62,7 @@ export const MenuPage: React.FC = () => {
     return (
       <div className="menu-page">
         <div className="error-container">
-          <p>Error loading menu items. Please try again later.</p>
+          <p>{t("error_loading_menu")}</p>
         </div>
       </div>
     );
@@ -76,22 +80,22 @@ export const MenuPage: React.FC = () => {
           <button
             onClick={handleBack}
             className="back-button"
-            aria-label="Go back"
+            aria-label={t("aria_go_back")}
           >
             <ArrowLeft size={24} />
           </button>
           <h1 className="menu-title">
-            {bakeryName ? `${bakeryName}'s Menu` : "Our Menu"}
+            {bakeryName
+              ? t("menu_title_dynamic", { name: bakeryName })
+              : t("our_menu")}
           </h1>
-          <p className="menu-subtitle">
-            Discover our delicious selection of cakes
-          </p>
+          <p className="menu-subtitle">{t("menu_subtitle")}</p>
           <div className="search-container">
             <Search className="search-icon" size={20} />
             <input
               type="text"
               className="search-input"
-              placeholder="Search by name, ingredients, or flavour..."
+              placeholder={t("search_placeholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -105,7 +109,7 @@ export const MenuPage: React.FC = () => {
           </div>
         ) : (
           <div className="no-results">
-            <p>No menu items found matching your search.</p>
+            <p>{t("no_menu_results")}</p>
           </div>
         )}
       </div>

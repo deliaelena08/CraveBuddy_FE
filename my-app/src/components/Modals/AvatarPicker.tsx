@@ -1,5 +1,6 @@
 import React from "react";
 import "./AvatarPicker.css";
+import { useTranslation } from "react-i18next";
 
 interface AvatarPickerProps {
   avatars: string[];
@@ -12,10 +13,11 @@ export const AvatarPicker: React.FC<AvatarPickerProps> = ({
   onSelect,
   onClose,
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>Select your avatar</h2>
+        <h2>{t("select_avatar")}</h2>
         <div className="avatar-grid">
           {avatars.map((avatar, idx) => (
             <img
@@ -28,7 +30,7 @@ export const AvatarPicker: React.FC<AvatarPickerProps> = ({
           ))}
         </div>
         <button onClick={onClose} className="close-button">
-          Close
+          t("close")
         </button>
       </div>
     </div>

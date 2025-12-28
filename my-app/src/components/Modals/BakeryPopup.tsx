@@ -10,6 +10,7 @@ import {
 } from "../../apis/favouriteQueryApi";
 import { UserDto } from "../../entities/user/UserDTO";
 import { useNotificationSystem } from "../../utils/useNotificationSystem";
+import { useTranslation } from "react-i18next";
 
 interface BakeryPopupProps {
   bakery: BakeryDto;
@@ -26,7 +27,7 @@ export const BakeryPopup: React.FC<BakeryPopupProps> = ({
   const { notify } = useNotificationSystem();
   const [createFavourite] = useCreateFavouriteMutation();
   const [deleteFavourite] = useDeleteFavouriteMutation();
-
+  const { t } = useTranslation();
   const isFavourite = !!existingFavourite;
 
   const handleSeeMenu = () => {
@@ -42,7 +43,7 @@ export const BakeryPopup: React.FC<BakeryPopupProps> = ({
     try {
       if (isFavourite) {
         await deleteFavourite(existingFavourite.id!).unwrap();
-        notify(`Removed ${bakery.name} from favourites`, "info");
+        notify(t("fav_removed", { name: bakery.name }), "info");
       } else {
         const newFav: FavouriteDto = {
           user: user,
@@ -50,11 +51,11 @@ export const BakeryPopup: React.FC<BakeryPopupProps> = ({
           createdAt: new Date(),
         };
         await createFavourite(newFav).unwrap();
-        notify(`Added ${bakery.name} to favourites! ❤️`, "success");
+        notify(t("fav_added", { name: bakery.name }), "success");
       }
     } catch (error) {
       console.error("Failed to update favourite", error);
-      notify("Oops! Something went wrong.", "error");
+      notify(t("error_generic"), "error");
     }
   };
 
@@ -63,9 +64,7 @@ export const BakeryPopup: React.FC<BakeryPopupProps> = ({
       <button
         className={`bakery-popup-star ${isFavourite ? "favourite" : ""}`}
         onClick={handleToggleFavourite}
-        aria-label={
-          isFavourite ? "Remove from favourites" : "Add to favourites"
-        }
+        aria-label={isFavourite ? t("aria_remove_fav") : t("aria_add_fav")}
         style={{ border: "none", background: "transparent", cursor: "pointer" }}
       >
         <Heart
@@ -84,14 +83,14 @@ export const BakeryPopup: React.FC<BakeryPopupProps> = ({
           className="bakery-popup-button see-menu"
           onClick={handleSeeMenu}
         >
-          See Menu
+          {t("see_menu")}
         </button>
         <button
           className="bakery-popup-button get-directions"
           onClick={handleGetDirections}
         >
           <Navigation size={16} />
-          Get me there
+          {t("get_directions")}
         </button>
       </div>
     </div>
