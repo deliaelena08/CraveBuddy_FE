@@ -1,17 +1,32 @@
 import React, { useState } from "react";
 import "./MenuItemPage.css";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Search, Plus, Trash2 } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MenuItemDto } from "../../entities/menuItem/MenuItemDto";
-import { useGetMenuItemsByBakeryIdQuery } from "../../apis/menuItemQueryApi";
+import {
+  useGetMenuItemsByBakeryIdQuery,
+  useCreateMenuItemMutation,
+  useDeleteMenuItemMutation,
+} from "../../apis/menuItemQueryApi";
+import { useCreateCakeMutation } from "../../apis/cakeQueryApi";
 import { MenuItemCard } from "../../components/MenuItemCard/MenuItemCard";
 import { useTranslation } from "react-i18next";
+import { SidebarMenu } from "../../components/SideBarMenu/SideBarMenu";
+import {
+  AddCakeModal,
+  NewMenuItemData,
+} from "../../components/Modals/AddCakeModal";
+import { useNotificationSystem } from "../../utils/useNotificationSystem";
+import { BakeryDto } from "../../entities/bakery/BakeryDto";
 
 export const MenuPage: React.FC = () => {
   const { bakeryId } = useParams<{ bakeryId: string }>();
   const parsedBakeryId = bakeryId ? parseInt(bakeryId, 10) : undefined;
 
   const { t } = useTranslation();
+  const { notify } = useNotificationSystem();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     data: menuItems,
@@ -20,14 +35,55 @@ export const MenuPage: React.FC = () => {
   } = useGetMenuItemsByBakeryIdQuery(parsedBakeryId!, {
     skip: !parsedBakeryId,
   });
-  const navigate = useNavigate();
-  const location = useLocation();
+
+  const [createCake] = useCreateCakeMutation();
+  const [createMenuItem] = useCreateMenuItemMutation();
+  const [deleteMenuItem] = useDeleteMenuItemMutation();
 
   const bakeryName = location.state?.bakeryName;
   const [searchTerm, setSearchTerm] = useState("");
+  const [showAddCakeModal, setShowAddCakeModal] = useState(false);
+
+  const userStr = localStorage.getItem("user");
+  const storedUser = userStr ? JSON.parse(userStr) : null;
+  const isAdmin = storedUser?.role === "ADMIN";
 
   const handleBack = () => {
     navigate(-1);
+  };
+
+  const handleSaveMenuItem = async (data: NewMenuItemData) => {
+    if (!parsedBakeryId) return;
+
+    try {
+      const savedCake = await createCake(data.cake).unwrap();
+      const newMenuItem: MenuItemDto = {
+        cake: savedCake,
+        bakery: { id: parsedBakeryId } as BakeryDto,
+        price: data.price,
+        quantity: data.quantity,
+      };
+
+      await createMenuItem(newMenuItem).unwrap();
+
+      notify(t("cake_added_success"), "success");
+      setShowAddCakeModal(false);
+    } catch (err) {
+      console.error("Error creating menu item chain:", err);
+      notify(t("cake_add_error"), "error");
+    }
+  };
+
+  const handleDeleteMenuItem = async (id: number) => {
+    if (window.confirm(t("confirm_delete_msg"))) {
+      try {
+        await deleteMenuItem(id).unwrap();
+        notify(t("delete_success"), "success");
+      } catch (err) {
+        console.error("Delete failed", err);
+        notify(t("delete_error"), "error");
+      }
+    }
   };
 
   const filteredMenuItems = menuItems?.filter((item: MenuItemDto) => {
@@ -41,11 +97,7 @@ export const MenuPage: React.FC = () => {
       item.cake.ingredientsRo?.toLowerCase().includes(term) ||
       item.cake.ingredientsEn?.toLowerCase().includes(term);
 
-    const flavourMatch =
-      item.cake.flavourRo?.toLowerCase().includes(term) ||
-      item.cake.flavourEn?.toLowerCase().includes(term);
-
-    return nameMatch || ingredientMatch || flavourMatch;
+    return nameMatch || ingredientMatch;
   });
 
   if (!parsedBakeryId) {
@@ -86,6 +138,7 @@ export const MenuPage: React.FC = () => {
         <span></span>
         <span></span>
       </div>
+
       <div className="menu-content">
         <div className="menu-header">
           <button
@@ -95,12 +148,14 @@ export const MenuPage: React.FC = () => {
           >
             <ArrowLeft size={24} />
           </button>
+
           <h1 className="menu-title">
             {bakeryName
               ? t("menu_title_dynamic", { name: bakeryName })
               : t("our_menu")}
           </h1>
           <p className="menu-subtitle">{t("menu_subtitle")}</p>
+
           <div className="search-container">
             <Search className="search-icon" size={20} />
             <input
@@ -112,10 +167,39 @@ export const MenuPage: React.FC = () => {
             />
           </div>
         </div>
+
+        {isAdmin && (
+          <button
+            className="admin-add-cake-btn"
+            onClick={() => setShowAddCakeModal(true)}
+            title={t("add_cake_title")}
+          >
+            <Plus size={24} color="white" />
+          </button>
+        )}
+
+        <AddCakeModal
+          isOpen={showAddCakeModal}
+          onClose={() => setShowAddCakeModal(false)}
+          onSave={handleSaveMenuItem}
+        />
+
         {filteredMenuItems && filteredMenuItems.length > 0 ? (
           <div className="menu-grid">
             {filteredMenuItems.map((menuItem) => (
-              <MenuItemCard key={menuItem.id} menuItem={menuItem} />
+              <div key={menuItem.id} className="menu-item-wrapper">
+                <MenuItemCard menuItem={menuItem} />
+
+                {isAdmin && (
+                  <button
+                    className="delete-item-btn"
+                    onClick={() => handleDeleteMenuItem(menuItem.id!)}
+                    title="Delete Item"
+                  >
+                    <Trash2 size={18} color="white" />
+                  </button>
+                )}
+              </div>
             ))}
           </div>
         ) : (

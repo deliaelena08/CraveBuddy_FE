@@ -1,0 +1,104 @@
+.add-bakery-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(78, 52, 46, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.add-bakery-modal {
+  background: #fffaf4;
+  color: #5d4037;
+  border-radius: 14px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(109, 76, 65, 0.35);
+  width: 90%;
+  max-width: 350px;
+  position: relative;
+  border: 2px solid #d7b49e;
+}
+
+.add-bakery-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #4e342e;
+  margin-bottom: 1rem;
+}
+
+.add-bakery-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bakery-input {
+  padding: 10px;
+  border: 1px solid #d7b49e;
+  border-radius: 8px;
+  background-color: white;
+  color: #4e342e;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.bakery-input:focus {
+  border-color: #6d4c41;
+  box-shadow: 0 0 0 2px rgba(109, 76, 65, 0.1);
+}
+
+.location-btn {
+  background: #fff;
+  border: 1px dashed #6d4c41;
+  color: #6d4c41;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.location-btn:hover {
+  background: #efebe9;
+}
+
+.location-btn.selected {
+  background: #e0f2f1;
+  border-color: #00695c;
+  color: #00695c;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.1s;
+}
+
+.modal-btn:hover {
+  transform: translateY(-2px);
+}
+
+.save-btn {
+  background: #6d4c41;
+  color: white;
+}
+
+.cancel-btn {
+  background: #d7b49e;
+  color: white;
+}

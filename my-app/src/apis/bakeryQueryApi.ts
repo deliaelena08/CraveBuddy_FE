@@ -30,6 +30,15 @@ export const bakeryQueryApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [{ type: "bakeries" }],
     }),
+
+    updateBakery: builder.mutation<BakeryDto, { id: number; data: BakeryDto }>({
+      query: ({ id, data }) => ({
+        url: `${bakeriesBaseUrl}/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["bakeries"],
+    }),
   }),
   overrideExisting: false,
 });
@@ -39,4 +48,5 @@ export const {
   useGetBakeryByIdQuery,
   useCreateBakeryMutation,
   useDeleteBakeryMutation,
+  useUpdateBakeryMutation,
 } = bakeryQueryApi;

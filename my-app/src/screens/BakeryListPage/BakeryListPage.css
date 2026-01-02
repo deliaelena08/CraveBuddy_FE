@@ -1,0 +1,232 @@
+.bakery-list-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: #fffaf4;
+  justify-content: center;
+  font-family: "Poppins", sans-serif;
+}
+
+.bakery-list-content {
+  flex: 1;
+  padding: 2rem 3rem;
+  max-width: 1400px;
+  width: 100%;
+}
+
+.list-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(109, 76, 65, 0.15);
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 2rem;
+  color: #4e342e;
+  font-weight: 800;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #8d6e63;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.action-btn-modern {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.action-btn-modern.add {
+  background-color: #d7b49e;
+  border: 2px solid #d7b49e;
+  color: #fff;
+}
+
+.action-btn-modern.add:hover {
+  background-color: #bcaaa4;
+  border-color: #bcaaa4;
+  transform: translateY(-2px);
+}
+
+.action-btn-modern.back {
+  background-color: transparent;
+  border: 2px solid #d7b49e;
+  color: #6d4c41;
+}
+
+.action-btn-modern.back:hover {
+  background-color: #fbe9e7;
+  color: #4e342e;
+  transform: translateY(-2px);
+}
+
+.bakeries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+.bakery-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 4px 12px rgba(109, 76, 65, 0.06);
+  border: 1px solid #fcfbf9;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.bakery-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(109, 76, 65, 0.12);
+  border-color: #d7b49e;
+}
+
+.bakery-avatar-section {
+  flex-shrink: 0;
+}
+
+.bakery-avatar-circle {
+  width: 60px;
+  height: 60px;
+  background-color: #efebe9;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #5d4037;
+}
+
+.bakery-info-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.bakery-name {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #3e2723;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bakery-city-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #e0f2f1;
+  color: #00695c;
+  padding: 2px 8px;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.bakery-address {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #8d6e63;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bakery-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.card-action-btn {
+  border: none;
+  background: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-btn {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+.menu-btn:hover {
+  background-color: #ffe0b2;
+}
+
+.edit-btn {
+  background-color: #e1f5fe;
+  color: #0288d1;
+}
+.edit-btn:hover {
+  background-color: #b3e5fc;
+}
+
+.delete-btn {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+.delete-btn:hover {
+  background-color: #ffcdd2;
+}
+
+@media (max-width: 768px) {
+  .bakery-list-content {
+    padding: 1.5rem;
+  }
+
+  .list-header-modern {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .action-btn-modern {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .bakeries-grid {
+    grid-template-columns: 1fr;
+  }
+}

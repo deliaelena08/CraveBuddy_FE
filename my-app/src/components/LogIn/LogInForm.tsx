@@ -34,7 +34,11 @@ export const LoginForm: React.FC = () => {
       const result = await loginUser(formData).unwrap();
 
       localStorage.setItem("token", result.token);
-      const userToSave = { id: result.id, username: result.username };
+      const userToSave = {
+        id: result.id,
+        username: result.username,
+        role: result.role,
+      };
       localStorage.setItem("user", JSON.stringify(userToSave));
       if (result.language) {
         const lang = result.language.toLowerCase();

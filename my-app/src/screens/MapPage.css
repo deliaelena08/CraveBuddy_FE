@@ -84,3 +84,32 @@
 .leaflet-popup {
   bottom: 35px !important;
 }
+
+.admin-add-btn {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  z-index: 2000;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #4e342e;
+  border: 2px solid #d2b48c;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.admin-add-btn:hover {
+  background-color: #5d4037;
+  transform: scale(1.1);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+}
+
+.admin-add-btn svg {
+  width: 24px;
+  height: 24px;
+}

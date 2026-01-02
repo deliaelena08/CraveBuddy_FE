@@ -1,0 +1,186 @@
+.user-list-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: #fffaf4;
+}
+
+.user-list-content {
+  flex: 1;
+  padding: 2rem 3rem;
+  transition: margin-left 0.3s ease;
+}
+
+.list-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(109, 76, 65, 0.2);
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 2rem;
+  color: #4e342e;
+  font-weight: 800;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #8d6e63;
+}
+
+.back-btn-modern {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 2px solid #d7b49e;
+  background-color: transparent;
+  color: #6d4c41;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.back-btn-modern:hover {
+  background-color: #4e342e;
+  border-color: #4e342e;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(78, 52, 46, 0.2);
+}
+
+@media (max-width: 768px) {
+  .user-list-content {
+    margin-left: 0;
+    padding: 1.5rem;
+  }
+
+  .list-header-modern {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .back-btn-modern {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .users-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.user-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 4px 12px rgba(109, 76, 65, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.user-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(109, 76, 65, 0.15);
+  border-color: #d7b49e;
+}
+
+.user-avatar-section {
+  flex-shrink: 0;
+}
+.avatar-circle {
+  width: 55px;
+  height: 55px;
+  background-color: #f5eee1;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #d7b49e;
+  overflow: hidden;
+}
+
+.user-info-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: hidden;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 1rem;
+  color: #3e2723;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background-color: #fff3e0;
+  color: #e65100;
+  padding: 2px 8px;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.user-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  border: none;
+  background: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.action-btn.edit {
+  color: #6d4c41;
+  background-color: #fff8e1;
+}
+.action-btn.edit:hover {
+  background-color: #ffe0b2;
+}
+.action-btn.delete {
+  color: #d32f2f;
+  background-color: #ffebee;
+}
+.action-btn.delete:hover {
+  background-color: #ffcdd2;
+}
