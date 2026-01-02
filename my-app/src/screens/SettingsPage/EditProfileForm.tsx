@@ -8,6 +8,7 @@ import { InputField } from "../../components/Inputs/InputField";
 import { SelectField } from "../../components/Inputs/SelectField";
 import { Language } from "../../entities/user/Language";
 import { useTranslation } from "react-i18next";
+import { useNotificationSystem } from "../../utils/useNotificationSystem";
 
 export interface ProfileData {
   username: string;
@@ -18,7 +19,7 @@ export interface ProfileData {
 
 interface EditProfileFormProps {
   initialData: ProfileData;
-  onSave: (data: ProfileData) => void;
+  onSave: (data: ProfileData) => Promise<void> | void;
   isLoading?: boolean;
 }
 
@@ -31,6 +32,8 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const { t, i18n } = useTranslation();
 
+  const { notify } = useNotificationSystem();
+
   const cities = ["Cluj-Napoca", "București", "Timișoara", "Iași", "Constanța"];
   const languagesDisplay = ["English", "Română"];
 
@@ -42,6 +45,7 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
     if (name === "language") {
       const selectedLanguage = value === "Română" ? Language.RO : Language.EN;
       const langCode = selectedLanguage === Language.RO ? "ro" : "en";
+
       i18n.changeLanguage(langCode);
 
       setFormData((prev) => ({ ...prev, language: selectedLanguage }));
@@ -55,9 +59,16 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
     setShowAvatarPicker(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+
+    try {
+      await onSave(formData);
+      notify(t("profile_saved_success"), "success");
+    } catch (error) {
+      console.error("Profile save error:", error);
+      notify(t("profile_saved_error"), "error");
+    }
   };
 
   const getCurrentLanguageDisplay = () => {

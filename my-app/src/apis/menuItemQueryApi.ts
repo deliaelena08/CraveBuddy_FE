@@ -19,6 +19,11 @@ export const menuItemQueryApi = apiSlice.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "menuitems", id }],
     }),
 
+    getMenuItemsByCakeId: builder.query<MenuItemDto[], number>({
+      query: (id) => `${menuItemsBaseUrl}/cake/${id}`,
+      providesTags: (result, error, id) => [{ type: "menuitems", id }],
+    }),
+
     createMenuItem: builder.mutation<MenuItemDto, MenuItemDto>({
       query: (menuItem) => ({
         url: menuItemsBaseUrl,
@@ -44,5 +49,6 @@ export const {
   useDeleteMenuItemMutation,
   useGetMenuItemByIdQuery,
   useGetMenuItemsByBakeryIdQuery,
+  useGetMenuItemsByCakeIdQuery,
   useGetMenuItemsQuery,
 } = menuItemQueryApi;

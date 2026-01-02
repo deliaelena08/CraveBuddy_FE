@@ -17,6 +17,7 @@ import {
 } from "../../apis/userQueryApi";
 import { UserDto } from "../../entities/user/UserDTO";
 import { Language } from "../../entities/user/Language";
+import { useNotificationSystem } from "../../utils/useNotificationSystem";
 
 type SettingsSection =
   | "main"
@@ -37,8 +38,8 @@ export const SettingsPage: React.FC = () => {
   const [currentSection, setCurrentSection] = useState<SettingsSection>("main");
   const navigate = useNavigate();
   const [userId, setUserId] = useState<number | null>(null);
-  const { i18n } = useTranslation();
-
+  const { i18n, t } = useTranslation();
+  const { notify } = useNotificationSystem();
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -90,29 +91,26 @@ export const SettingsPage: React.FC = () => {
       };
 
       await updateUser({ id: userId, data: userDto }).unwrap();
-      alert("Profile updated successfully!");
+      notify(t("profile_saved_success"), "success");
       refetch();
       goBack();
     } catch (error) {
       console.error("Update failed", error);
-      alert("Failed to update profile.");
+      notify(t("profile_saved_error"), "error");
     }
   };
 
   const handleDeleteAccount = async () => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete your account? This cannot be undone."
-      )
-    ) {
+    if (window.confirm(t("delete_account_confirm"))) {
       if (userId) {
         try {
           await deleteUser(userId).unwrap();
           localStorage.removeItem("token");
+          notify(t("account_deleted_success"), "success");
           navigate("/login");
         } catch (error) {
           console.error("Delete failed", error);
-          alert("Failed to delete account.");
+          notify(t("account_delete_error"), "error");
         }
       }
     }

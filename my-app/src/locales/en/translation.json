@@ -75,5 +75,18 @@
   "match_score": "Match",
   "find_location": "Find Location",
   "placeholder_allergies": "Type allergies or 'no'...",
-  "placeholder_cravings": "Type your craving..."
+  "placeholder_cravings": "Type your craving...",
+  "chatbot_try_again_hint": "Not satisfied? Type another craving below and let's try again! 🍰",
+  "product_found_at": "Product found at {{name}}! 🍰",
+  "product_not_found_in_menu": "This product is currently not available in any bakery menu.",
+  "no_favourites_yet": "You haven't added any favorites yet! Start exploring! ❤️",
+  "profile_saved_success": "Profile updated successfully! ✨",
+  "profile_saved_error": "An error occurred while updating the profile. Please try again.",
+  "delete_account_confirm": "Are you sure you want to delete your account?",
+  "account_deleted_success": "Account deleted successfully",
+  "account_delete_error": "An error occurred while deleting your account. Please try again.",
+  "saved_preferences": "Your preferences were saved successfully!",
+  "save_info": "Save info",
+  "confirm_clear_all": "Delete all notifications?",
+  "clear_all": "Clear"
 }

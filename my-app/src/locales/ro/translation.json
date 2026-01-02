@@ -74,5 +74,18 @@
   "match_score": "Match",
   "find_location": "Vezi Locația",
   "placeholder_allergies": "Scrie alergeni sau 'nu'...",
-  "placeholder_cravings": "Scrie ce poftești..."
+  "placeholder_cravings": "Scrie ce poftești...",
+  "chatbot_try_again_hint": "Nu ești mulțumit? Scrie altă poftă mai jos și căutăm din nou! 🍰",
+  "product_found_at": "Produsul a fost găsit la {{name}}! 🍰",
+  "product_not_found_in_menu": "Acest produs nu este momentan în meniul niciunei cofetării.",
+  "no_favourites_yet": "Încă nu ai adăugat nimic la favorite! Începe să explorezi! ❤️",
+  "profile_saved_success": "Profilul a fost actualizat cu succes! ✨",
+  "profile_saved_error": "A apărut o eroare la actualizarea profilului. Încearcă din nou.",
+  "delete_account_confirm": "Ești sigur că vrei să-ți ștergi contul?",
+  "account_deleted_success": "Contul a fost șters cu succes!",
+  "account_delete_error": "A apărut o eroare la ștergerea profilului. Încearcă din nou.",
+  "saved_preferences": "Preferințele tale au fost salvate cu success!",
+  "save_info": "Salvează informațiile",
+  "confirm_clear_all": "Sigur vrei să ștergi toate notificările?",
+  "clear_all": "Șterge tot"
 }

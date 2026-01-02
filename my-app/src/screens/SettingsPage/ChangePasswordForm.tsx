@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ArrowLeft, Lock } from "lucide-react";
 import { InputField } from "../../components/Inputs/InputField";
 import { useTranslation } from "react-i18next";
+import { useNotificationSystem } from "../../utils/useNotificationSystem";
 
 interface ChangePasswordFormProps {
   onBack: () => void;
@@ -11,7 +12,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
   onBack,
 }) => {
   const { t } = useTranslation();
-
+  const { notify } = useNotificationSystem();
   const [passwords, setPasswords] = useState({
     current: "",
     new: "",
@@ -24,11 +25,11 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
 
   const handleSubmit = () => {
     if (passwords.new !== passwords.confirm) {
-      alert(t("passwords_no_match"));
+      notify(t("passwords_no_match"), "error");
       return;
     }
     console.log("Change password logic here");
-    alert(t("password_updated_success"));
+    notify(t("password_updated_success"), "success");
     onBack();
   };
 

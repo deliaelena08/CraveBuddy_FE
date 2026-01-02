@@ -12,13 +12,11 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-// Asigură-te că imporți componenta DefaultAvatar sau o imagine
 import { DefaultAvatar } from "../../components/SignUp/DefaultAvatar";
 
 interface SettingsMenuProps {
   onNavigate: (section: any) => void;
   onDeleteAccount: () => void;
-  // Adăugăm prop-ul pentru datele utilizatorului ca să putem afișa cardul corect
   userProfile?: { name: string; subtitle: string; icon: string };
 }
 
@@ -39,14 +37,11 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({
         <h1>{t("settings_title")}</h1>
       </div>
 
-      {/* --- 1. CARDUL DE PROFIL (CLICKABLE) --- */}
-      {/* Acesta este doar header-ul cu poza. Îl închidem imediat după conținut. */}
       <div
         className="settings-profile-card"
         onClick={() => onNavigate("profile")}
-        style={{ cursor: "pointer", marginBottom: "2rem" }} // Stiluri inline temporare sau CSS
+        style={{ cursor: "pointer", marginBottom: "2rem" }}
       >
-        {/* Aici ar trebui să fie conținutul vizual al cardului (Avatar + Nume) */}
         <div className="mini-avatar">
           {userProfile?.icon ? (
             <img src={userProfile.icon} alt="avatar" />
@@ -59,12 +54,7 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({
           <p>{userProfile?.subtitle || "Location"}</p>
         </div>
       </div>
-      {/* 🛑 AICI SE ÎNCHIDE CARDUL DE PROFIL! 🛑 
-          Orice pui mai jos NU va mai declanșa navigarea la profil. */}
 
-      {/* --- 2. RESTUL BUTOANELOR (SEPARATE) --- */}
-
-      {/* Secțiunea CONT */}
       <div className="settings-section">
         <h3>{t("account")}</h3>
 
@@ -88,7 +78,6 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({
         </button>
       </div>
 
-      {/* Secțiunea SETĂRI APLICAȚIE */}
       <div className="settings-section">
         <h3>{t("app_settings")}</h3>
         <button
@@ -110,7 +99,6 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({
         </button>
       </div>
 
-      {/* Secțiunea SUPORT */}
       <div className="settings-section">
         <h3>{t("support")}</h3>
         <button className="settings-item" onClick={() => onNavigate("support")}>
@@ -129,7 +117,6 @@ export const SettingsMenu: React.FC<SettingsMenuProps> = ({
         </button>
       </div>
 
-      {/* Zona PERICOL */}
       <div className="settings-section danger-zone">
         <button className="settings-item danger" onClick={onDeleteAccount}>
           <div className="settings-item-left">

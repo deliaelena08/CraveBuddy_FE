@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNotificationSystem } from "../../utils/useNotificationSystem";
 
 interface PreferencesFormProps {
   onBack: () => void;
@@ -8,6 +9,7 @@ interface PreferencesFormProps {
 
 export const PreferencesForm: React.FC<PreferencesFormProps> = ({ onBack }) => {
   const { t, i18n } = useTranslation();
+  const { notify } = useNotificationSystem();
 
   const [settings, setSettings] = useState({
     language: i18n.language.startsWith("ro") ? "ro" : "en",
@@ -35,6 +37,11 @@ export const PreferencesForm: React.FC<PreferencesFormProps> = ({ onBack }) => {
     i18n.changeLanguage(newLang);
 
     setSettings({ ...settings, language: newLang });
+  };
+
+  const handleSave = () => {
+    console.log(settings);
+    notify(t("saved_preferences"), "success");
   };
 
   return (
@@ -68,13 +75,7 @@ export const PreferencesForm: React.FC<PreferencesFormProps> = ({ onBack }) => {
           </div>
         </div>
 
-        <button
-          className="save-button"
-          onClick={() => {
-            console.log(settings);
-            alert(t("saved_alert"));
-          }}
-        >
+        <button className="save-button" onClick={handleSave}>
           <Save size={18} />
           {t("save_preferences")}
         </button>

@@ -2,32 +2,33 @@ import React, { useState } from "react";
 import "./MenuItemCard.css";
 import { MenuItemDto } from "../../entities/menuItem/MenuItemDto";
 import { useTranslation } from "react-i18next";
+import { getLocalizedCake } from "../../utils/cakeUtils";
 
 interface MenuItemCardProps {
   menuItem: MenuItemDto;
 }
 
 export const MenuItemCard: React.FC<MenuItemCardProps> = ({ menuItem }) => {
+  const { t, i18n } = useTranslation();
   const [showFullIngredients, setShowFullIngredients] = useState(false);
 
+  const displayCake = getLocalizedCake(menuItem.cake, i18n.language);
+
   const hasIngredients =
-    menuItem.cake.ingredients && menuItem.cake.ingredients.trim().length > 0;
+    displayCake.ingredients && displayCake.ingredients.trim().length > 0;
   const hasQuantity = menuItem.quantity && menuItem.quantity > 0;
-  const hasSweetness = menuItem.cake.sweetness && menuItem.cake.sweetness > 0;
+  const hasSweetness = displayCake.sweetness && displayCake.sweetness > 0;
   const hasTexture =
-    menuItem.cake.texture && menuItem.cake.texture.trim().length > 0;
+    displayCake.texture && displayCake.texture.trim().length > 0;
   const hasFlavour =
-    menuItem.cake.flavour &&
-    menuItem.cake.flavour.trim().length > 0 &&
-    menuItem.cake.flavour != null;
-  const { t } = useTranslation();
-  const shouldTruncate =
-    hasIngredients && menuItem.cake.ingredients.length > 60;
+    displayCake.flavour && displayCake.flavour.trim().length > 0;
+
+  const shouldTruncate = hasIngredients && displayCake.ingredients.length > 60;
 
   const displayIngredients =
     shouldTruncate && !showFullIngredients
-      ? menuItem.cake.ingredients.substring(0, 80) + "..."
-      : menuItem.cake.ingredients;
+      ? displayCake.ingredients.substring(0, 80) + "..."
+      : displayCake.ingredients;
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -43,10 +44,11 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ menuItem }) => {
 
   const hasDetails = hasQuantity || hasSweetness;
   const hasFooterInfo = hasTexture || hasFlavour;
+
   return (
     <div className="menu-item-card">
       <div className="menu-item-header">
-        <h2 className="menu-item-name">{menuItem.cake.name}</h2>
+        <h2 className="menu-item-name">{displayCake.name}</h2>
         <span className="menu-item-price">{menuItem.price} RON</span>
       </div>
 
@@ -81,9 +83,9 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ menuItem }) => {
               <div className="detail-item">
                 <span className="detail-label">{t("sweetness")}:</span>
                 <div className="sweetness-rating">
-                  {renderStars(menuItem.cake.sweetness)}
+                  {renderStars(displayCake.sweetness)}
                   <span className="rating-number">
-                    {menuItem.cake.sweetness}/10
+                    {displayCake.sweetness}/10
                   </span>
                 </div>
               </div>
@@ -97,13 +99,13 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ menuItem }) => {
               {hasTexture && (
                 <span className="info-item">
                   <span className="info-label">{t("texture")}:</span>{" "}
-                  {menuItem.cake.flavour}
+                  {displayCake.texture}
                 </span>
               )}
               {hasFlavour && (
                 <span className="info-item">
                   <span className="info-label">{t("flavour")}:</span>{" "}
-                  {menuItem.cake.texture}
+                  {displayCake.flavour}
                 </span>
               )}
             </div>

@@ -19,8 +19,28 @@ export const notificationQueryApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["notifications"],
     }),
+
+    deleteNotification: builder.mutation<void, number>({
+      query: (notificationId) => ({
+        url: `/notifications/${notificationId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["notifications"],
+    }),
+
+    deleteAllNotifications: builder.mutation<void, number>({
+      query: (userId) => ({
+        url: `/notifications/user/${userId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["notifications"],
+    }),
   }),
 });
 
-export const { useGetNotificationsQuery, useCreateNotificationMutation } =
-  notificationQueryApi;
+export const {
+  useGetNotificationsQuery,
+  useCreateNotificationMutation,
+  useDeleteNotificationMutation,
+  useDeleteAllNotificationsMutation,
+} = notificationQueryApi;

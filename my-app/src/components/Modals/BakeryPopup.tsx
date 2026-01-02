@@ -35,7 +35,7 @@ export const BakeryPopup: React.FC<BakeryPopupProps> = ({
   };
 
   const handleGetDirections = () => {
-    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${bakery.latitude},${bakery.longitude}`;
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${bakery.longitude},${bakery.latitude}`;
     window.open(googleMapsUrl, "_blank");
   };
 

@@ -3,6 +3,7 @@ import { Send, ArrowLeft, MapPin, RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./Chatbot.css";
 import { useTranslation } from "react-i18next";
+import { getLocalizedCake } from "../../utils/cakeUtils";
 
 type ChatStep = "ASK_CRAVING" | "ASK_ALLERGIES" | "SHOW_RESULTS";
 
@@ -12,13 +13,12 @@ interface Message {
   sender: "user" | "bot";
   timestamp: Date;
   recommendations?: any[];
-  isFinal?: boolean;
 }
 
 export const Chatbot: React.FC = () => {
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [step, setStep] = useState<ChatStep>("ASK_CRAVING");
   const [userCraving, setUserCraving] = useState("");
@@ -50,6 +50,23 @@ export const Chatbot: React.FC = () => {
     };
     setMessages((prev) => [...prev, userMsg]);
     setInputValue("");
+
+    if (step === "SHOW_RESULTS") {
+      setUserCraving(userText);
+      setStep("ASK_ALLERGIES");
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            text: t("chatbot_ask_allergies"),
+            sender: "bot",
+            timestamp: new Date(),
+          },
+        ]);
+      }, 500);
+      return;
+    }
 
     if (step === "ASK_CRAVING") {
       setUserCraving(userText);
@@ -105,9 +122,20 @@ export const Chatbot: React.FC = () => {
             sender: "bot",
             timestamp: new Date(),
             recommendations: results,
-            isFinal: true,
           },
         ]);
+
+        setTimeout(() => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: Date.now() + 1,
+              text: t("chatbot_try_again_hint"),
+              sender: "bot",
+              timestamp: new Date(),
+            },
+          ]);
+        }, 1000);
 
         setStep("SHOW_RESULTS");
       } catch (e: any) {
@@ -148,7 +176,7 @@ export const Chatbot: React.FC = () => {
   };
 
   const handleGoToLocation = (cakeId: number) => {
-    console.log("Navigare către harta pentru tort:", cakeId);
+    navigate("/home-map", { state: { targetCakeId: cakeId } });
   };
 
   return (
@@ -177,23 +205,26 @@ export const Chatbot: React.FC = () => {
             </div>
             {msg.recommendations && (
               <div className="recommendations-list">
-                {msg.recommendations.map((cake: any) => (
-                  <div key={cake.id} className="cake-card">
-                    <div className="cake-info">
-                      <h4>{cake.title}</h4>
-                      <span className="cake-score">
-                        {Math.round(cake.score * 100)}% Match
-                      </span>
+                {msg.recommendations.map((cake: any) => {
+                  const displayCake = getLocalizedCake(cake, i18n.language);
+                  return (
+                    <div key={cake.id} className="cake-card">
+                      <div className="cake-info">
+                        <h4>{displayCake.name}</h4>
+                        <span className="cake-score">
+                          {Math.round(cake.score * 100)}% Match
+                        </span>
+                      </div>
+                      <p className="cake-desc">{displayCake.ingredients}</p>
+                      <button
+                        className="find-location-btn"
+                        onClick={() => handleGoToLocation(cake.id)}
+                      >
+                        <MapPin size={16} /> {t("find_location")}
+                      </button>
                     </div>
-                    <p className="cake-desc">{cake.ingredients}</p>
-                    <button
-                      className="find-location-btn"
-                      onClick={() => handleGoToLocation(cake.id)}
-                    >
-                      <MapPin size={16} /> {t("find_location")}
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -220,12 +251,9 @@ export const Chatbot: React.FC = () => {
               ? t("placeholder_allergies")
               : t("placeholder_cravings")
           }
-          disabled={step === "SHOW_RESULTS" || isLoading}
+          disabled={isLoading}
         />
-        <button
-          onClick={handleSend}
-          disabled={step === "SHOW_RESULTS" || isLoading}
-        >
+        <button onClick={handleSend} disabled={isLoading}>
           <Send size={20} />
         </button>
       </div>

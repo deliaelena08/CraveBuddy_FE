@@ -1,23 +1,21 @@
-/* --- LAYOUT GENERAL (Full Screen) --- */
 .chatbot-container {
   width: 100%;
-  height: 100vh; /* Ocupă tot ecranul */
+  height: 100vh;
   margin: 0;
   display: flex;
   flex-direction: column;
-  background-color: #fffaf4; /* Crem deschis */
+  background-color: #fffaf4;
   position: relative;
   overflow: hidden;
 }
 
-/* --- HEADER (Grid pentru centrare perfectă) --- */
 .chatbot-header {
   display: grid;
-  grid-template-columns: 48px 1fr 48px; /* Stânga - Mijloc - Dreapta */
+  grid-template-columns: 48px 1fr 48px;
   align-items: center;
   padding: 0.8rem 1.5rem;
   background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px); /* Efect sticlă ca pe iOS/Insta */
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid #f0e6dc;
   z-index: 10;
 }
@@ -27,11 +25,10 @@
   color: #4e342e;
   font-size: 1.1rem;
   font-weight: 700;
-  text-align: center; /* Centrat în coloana din mijloc */
+  text-align: center;
   letter-spacing: -0.5px;
 }
 
-/* Butoanele din Header */
 .back-button,
 .restart-header-btn {
   background: transparent;
@@ -53,9 +50,6 @@
   background-color: #f5eee6;
 }
 
-/* Dacă butonul de restart lipsește, grid-ul păstrează titlul centrat */
-
-/* --- ZONA MESAJE --- */
 .chatbot-messages {
   flex: 1;
   overflow-y: auto;
@@ -67,7 +61,6 @@
   scroll-behavior: smooth;
 }
 
-/* Scrollbar fin */
 .chatbot-messages::-webkit-scrollbar {
   width: 6px;
 }
@@ -76,11 +69,10 @@
   border-radius: 10px;
 }
 
-/* --- WRAPPERS MESAJE --- */
 .message-wrapper {
   display: flex;
   flex-direction: column;
-  max-width: 70%; /* Mesajele nu se întind pe tot ecranul */
+  max-width: 70%;
   width: fit-content;
   animation: fadeIn 0.3s ease;
 }
@@ -96,7 +88,6 @@
   }
 }
 
-/* Aliniere */
 .message-wrapper.user {
   align-self: flex-end;
   align-items: flex-end;
@@ -107,7 +98,6 @@
   align-items: flex-start;
 }
 
-/* --- BULELE DE TEXT (Bubble Style) --- */
 .message-content {
   padding: 12px 18px;
   font-size: 0.95rem;
@@ -116,16 +106,14 @@
   word-wrap: break-word;
 }
 
-/* Stil Bot: Alb, umbră fină */
 .bot-message .message-content {
   background-color: #ffffff;
   color: #333;
-  border-radius: 22px 22px 22px 4px; /* Rotunjit modern */
+  border-radius: 22px 22px 22px 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
   border: 1px solid #efebe9;
 }
 
-/* Stil User: Gradient din tema ta */
 .user-message .message-content {
   background: linear-gradient(135deg, #d7b49e 0%, #bcaaa4 100%);
   color: white;
@@ -133,12 +121,11 @@
   box-shadow: 0 2px 8px rgba(215, 180, 158, 0.4);
 }
 
-/* --- CARDURI RECOMANDĂRI --- */
 .recommendations-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 300px; /* Lățime fixă pentru carduri ca să arate bine */
+  width: 300px;
   margin-top: 8px;
 }
 
@@ -203,7 +190,7 @@
 .find-location-btn {
   margin-top: 5px;
   margin-left: 8px;
-  background: #4e342e; /* Maro închis */
+  background: #4e342e;
   color: white;
   border: none;
   border-radius: 10px;
@@ -222,11 +209,10 @@
   background: #6d4c41;
 }
 
-/* --- INPUT AREA (FIXED BOTTOM) --- */
 .chatbot-input {
   padding: 15px 20px;
-  background: white; /* Fundal alb pentru toată zona de jos */
-  border-top: 1px solid #e8ddd0; /* Linie fină de separare sus */
+  background: white;
+  border-top: 1px solid #e8ddd0;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -238,24 +224,21 @@
 .chatbot-input input {
   flex: 1;
   padding: 14px 20px;
-  /* Aici e schimbarea: îi dăm culoare ca să se vadă */
   background-color: #f3f4f6;
-  border: 1px solid transparent; /* Bordură invizibilă inițial */
-  border-radius: 30px; /* Rotund complet (pilulă) */
+  border: 1px solid transparent;
+  border-radius: 30px;
   font-size: 0.95rem;
   color: #333;
   outline: none;
   transition: all 0.2s ease;
 }
 
-/* Când dai click să scrii, se albește și primește contur maro */
 .chatbot-input input:focus {
   background-color: white;
-  border-color: #d7b49e; /* Culoarea ta de accent */
-  box-shadow: 0 0 0 3px rgba(215, 180, 158, 0.15); /* Halou fin */
+  border-color: #d7b49e;
+  box-shadow: 0 0 0 3px rgba(215, 180, 158, 0.15);
 }
 
-/* Placeholder (textul "Scrie ce poftești...") */
 .chatbot-input input::placeholder {
   color: #9ca3af;
 }
@@ -287,7 +270,6 @@
   cursor: not-allowed;
 }
 
-/* --- LOADER --- */
 .loading .message-content {
   background: white;
   padding: 15px 20px;
@@ -323,7 +305,6 @@
   }
 }
 
-/* --- MOBILE ADJUSTMENTS --- */
 @media (max-width: 768px) {
   .message-wrapper {
     max-width: 85%;

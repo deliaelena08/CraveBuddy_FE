@@ -30,12 +30,23 @@ export const MenuPage: React.FC = () => {
     navigate(-1);
   };
 
-  const filteredMenuItems = menuItems?.filter(
-    (item: MenuItemDto) =>
-      item.cake.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.cake.ingredients.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.cake.flavour.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredMenuItems = menuItems?.filter((item: MenuItemDto) => {
+    const term = searchTerm.toLowerCase();
+
+    const nameMatch =
+      item.cake.nameRo?.toLowerCase().includes(term) ||
+      item.cake.nameEn?.toLowerCase().includes(term);
+
+    const ingredientMatch =
+      item.cake.ingredientsRo?.toLowerCase().includes(term) ||
+      item.cake.ingredientsEn?.toLowerCase().includes(term);
+
+    const flavourMatch =
+      item.cake.flavourRo?.toLowerCase().includes(term) ||
+      item.cake.flavourEn?.toLowerCase().includes(term);
+
+    return nameMatch || ingredientMatch || flavourMatch;
+  });
 
   if (!parsedBakeryId) {
     return (

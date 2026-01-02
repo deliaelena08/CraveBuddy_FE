@@ -1,12 +1,13 @@
 import React from "react";
 import { ArrowLeft, MapPin, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNotificationSystem } from "../../utils/useNotificationSystem";
 
 export const PrivacySection: React.FC<{ onBack: () => void }> = ({
   onBack,
 }) => {
   const { t } = useTranslation();
-
+  const { notify } = useNotificationSystem();
   return (
     <div className="settings-detail">
       <div className="settings-detail-header">
@@ -28,7 +29,7 @@ export const PrivacySection: React.FC<{ onBack: () => void }> = ({
           <MapPin size={18} />
           <p>{t("loc_helper")}</p>
         </div>
-        <button className="save-button" onClick={() => alert(t("saved_alert"))}>
+        <button className="save-button" onClick={() => notify(t("save_info"))}>
           <Save size={18} /> {t("save")}
         </button>
       </div>
