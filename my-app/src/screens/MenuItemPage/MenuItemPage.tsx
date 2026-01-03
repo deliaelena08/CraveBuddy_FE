@@ -11,7 +11,6 @@ import {
 import { useCreateCakeMutation } from "../../apis/cakeQueryApi";
 import { MenuItemCard } from "../../components/MenuItemCard/MenuItemCard";
 import { useTranslation } from "react-i18next";
-import { SidebarMenu } from "../../components/SideBarMenu/SideBarMenu";
 import {
   AddCakeModal,
   NewMenuItemData,

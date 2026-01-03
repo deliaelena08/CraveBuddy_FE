@@ -26,6 +26,45 @@ export const AddBakeryModal: React.FC<AddBakeryModalProps> = ({
     city: "Cluj-Napoca",
   });
 
+  useEffect(() => {
+    if (selectedLocation) {
+      setFormData((prev) => ({ ...prev, address: "Se caută adresa..." }));
+
+      const fetchAddress = async () => {
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${selectedLocation.lat}&lon=${selectedLocation.lng}`
+          );
+          const data = await response.json();
+
+          if (data && data.address) {
+            const road = data.address.road || "";
+            const number = data.address.house_number || "";
+            const city =
+              data.address.city ||
+              data.address.town ||
+              data.address.village ||
+              formData.city;
+            const cleanAddress = road
+              ? `${road} ${number}`.trim()
+              : data.display_name.split(",")[0];
+
+            setFormData((prev) => ({
+              ...prev,
+              address: cleanAddress,
+              city: city,
+            }));
+          }
+        } catch (error) {
+          console.error("Eroare la preluarea adresei:", error);
+          setFormData((prev) => ({ ...prev, address: "" }));
+        }
+      };
+
+      fetchAddress();
+    }
+  }, [selectedLocation]);
+
   if (!isOpen) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

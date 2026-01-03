@@ -86,12 +86,17 @@ export const Chatbot: React.FC = () => {
     } else if (step === "ASK_ALLERGIES") {
       setIsLoading(true);
       const allergens =
-        userText.toLowerCase().includes("nu") && userText.length < 5
+        (userText.toLowerCase().includes("nu") ||
+          userText.toLowerCase().includes("no")) &&
+        userText.length < 5
           ? ""
           : userText;
 
+      const lang = i18n.language === "ro" ? "ro" : "en";
+      const apiUrl = `http://127.0.0.1:8000/recommend/${lang}`;
+
       try {
-        const response = await fetch("http://127.0.0.1:8000/recommend", {
+        const response = await fetch(apiUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -205,20 +210,21 @@ export const Chatbot: React.FC = () => {
             </div>
             {msg.recommendations && (
               <div className="recommendations-list">
-                {msg.recommendations.map((cake: any) => {
-                  const displayCake = getLocalizedCake(cake, i18n.language);
+                {msg.recommendations.map((result: any) => {
                   return (
-                    <div key={cake.id} className="cake-card">
+                    <div key={result.id} className="cake-card">
                       <div className="cake-info">
-                        <h4>{displayCake.name}</h4>
+                        <h4>{result.name || "Unknown Cake"}</h4>
                         <span className="cake-score">
-                          {Math.round(cake.score * 100)}% Match
+                          {Math.round(result.score * 100)}% Match
                         </span>
                       </div>
-                      <p className="cake-desc">{displayCake.ingredients}</p>
+                      <p className="cake-desc">
+                        {result.ingredients || "No ingredients available"}
+                      </p>
                       <button
                         className="find-location-btn"
-                        onClick={() => handleGoToLocation(cake.id)}
+                        onClick={() => handleGoToLocation(result.id)}
                       >
                         <MapPin size={16} /> {t("find_location")}
                       </button>

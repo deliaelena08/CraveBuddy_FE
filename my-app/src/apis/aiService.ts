@@ -9,18 +9,23 @@ export interface AiRecipeResult {
 
 export const fetchAiRecommendations = async (
   query: string,
-  allergens: string = ""
+  allergens: string = "",
+  lang: string = "ro"
 ): Promise<AiRecipeResult[]> => {
   try {
-    const response = await fetch("http://127.0.0.1:8000/recommend", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: query,
-        allergens: allergens,
-        top_k: 3,
-      }),
-    });
+    const targetLang = lang === "ro" ? "ro" : "en";
+    const response = await fetch(
+      `http://127.0.0.1:8000/recommend/${targetLang}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: query,
+          allergens: allergens,
+          top_k: 3,
+        }),
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();

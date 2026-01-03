@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -53,54 +53,54 @@ const MapClickHandler = ({
 const MapRecenter = ({
   position,
   zoom,
+  animate = false,
 }: {
   position: { lat: number; lng: number };
   zoom?: number;
+  animate?: boolean;
 }) => {
   const map = useMap();
+  const prevPosRef = useRef(position);
 
   useEffect(() => {
-    const targetZoom = zoom || map.getZoom();
-    map.setView([position.lat, position.lng], targetZoom);
-  }, [position, zoom, map]);
+    prevPosRef.current = position;
+    if (animate) {
+      map.flyTo([position.lat, position.lng], zoom || map.getZoom(), {
+        animate: true,
+        duration: 2.0,
+      });
+    } else {
+      map.setView([position.lat, position.lng], zoom || map.getZoom());
+    }
+  }, [position, zoom, map, animate]);
 
   return null;
 };
 
 export const MapPage: React.FC = () => {
+  const { t } = useTranslation();
+  const { notify } = useNotificationSystem();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [position, setPosition] = useState(defaultPosition);
   const [zoomLevel, setZoomLevel] = useState(13);
+
+  const [shouldAnimateMap, setShouldAnimateMap] = useState(false);
+
   const [showFavouritesOnly, setShowFavouritesOnly] = useState(false);
   const [showAddBakeryModal, setShowAddBakeryModal] = useState(false);
   const [isPickingLocation, setIsPickingLocation] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+
   const [tempLocation, setTempLocation] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
-  const { t } = useTranslation();
-  const { notify } = useNotificationSystem();
-  const navigate = useNavigate();
 
   const userStr = localStorage.getItem("user");
   const storedUser = userStr ? JSON.parse(userStr) : null;
   const userId = storedUser?.id;
-  const [showNotifications, setShowNotifications] = useState(false);
-
-  const location = useLocation();
-  const targetCakeId = location.state?.targetCakeId;
-  const [targetBakeryId, setTargetBakeryId] = useState<number | null>(null);
-
-  const [handledCakeId, setHandledCakeId] = useState<number | null>(null);
-
-  const { data: foundMenuItems } = useGetMenuItemsByCakeIdQuery(targetCakeId!, {
-    skip: !targetCakeId,
-  });
-
-  const [createBakery] = useCreateBakeryMutation();
-
-  const { data: notificationList = [] } = useGetNotificationsQuery(userId!, {
-    skip: !userId,
-  });
 
   const currentUser: UserDto = storedUser
     ? ({
@@ -114,76 +114,68 @@ export const MapPage: React.FC = () => {
     : ({} as UserDto);
 
   const { data: bakeries = [] } = useGetBakeriesQuery();
-
   const { data: favourites = [] } = useGetFavouritesByUserIdQuery(userId!, {
     skip: !userId,
   });
+  const { data: notificationList = [] } = useGetNotificationsQuery(userId!, {
+    skip: !userId,
+  });
+
+  const [createBakery] = useCreateBakeryMutation();
+
+  const targetCakeId = location.state?.targetCakeId;
+  const { data: foundMenuItems, isSuccess: isMenuLoaded } =
+    useGetMenuItemsByCakeIdQuery(targetCakeId!, {
+      skip: !targetCakeId,
+    });
+
   const isAdmin = currentUser.role === "ADMIN";
   const displayedBakeries = showFavouritesOnly
     ? bakeries.filter((b) => favourites.some((fav) => fav.bakery.id === b.id))
     : bakeries;
 
   useEffect(() => {
-    if (targetCakeId && targetCakeId !== handledCakeId && foundMenuItems) {
+    if (targetCakeId && isMenuLoaded && foundMenuItems) {
       if (foundMenuItems.length > 0) {
         const foundBakery = foundMenuItems[0].bakery;
 
         if (foundBakery) {
+          console.log("Zooming to bakery:", foundBakery.name);
+          setShouldAnimateMap(true);
+
           setPosition({
             lat: foundBakery.longitude,
             lng: foundBakery.latitude,
           });
-          setTargetBakeryId(foundBakery.id!);
-          setZoomLevel(16);
+          setZoomLevel(18);
 
           notify(t("product_found_at", { name: foundBakery.name }), "success");
-
-          setHandledCakeId(targetCakeId);
-          navigate(location.pathname, { replace: true, state: {} });
         }
-      } else if (foundMenuItems.length === 0) {
+      } else {
         notify(t("product_not_found_in_menu"), "error");
-        setHandledCakeId(targetCakeId);
-        navigate(location.pathname, { replace: true, state: {} });
       }
+      navigate(location.pathname, { replace: true, state: {} });
     }
   }, [
-    foundMenuItems,
     targetCakeId,
-    handledCakeId,
-    t,
-    notify,
+    isMenuLoaded,
+    foundMenuItems,
     navigate,
     location.pathname,
+    t,
+    notify,
   ]);
 
   useEffect(() => {
+    setShouldAnimateMap(false);
+
     if (showFavouritesOnly) {
-      if (displayedBakeries.length > 0) {
-        const firstFav = displayedBakeries[0];
-        setPosition({ lat: firstFav.longitude, lng: firstFav.latitude });
-      } else {
+      if (displayedBakeries.length === 0) {
         notify(t("no_favourites_yet"), "info");
       }
     } else {
-      if (!targetBakeryId) {
-        setPosition(defaultPosition);
-        setZoomLevel(13);
-      }
     }
-  }, [showFavouritesOnly, displayedBakeries.length, targetBakeryId, t, notify]);
-
-  useEffect(() => {
-    if (navigator.geolocation && !targetCakeId && !showFavouritesOnly) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude } = pos.coords;
-          setPosition({ lat: latitude, lng: longitude });
-        },
-        () => console.warn("Using default location")
-      );
-    }
-  }, []);
+  }, [showFavouritesOnly, t, notify]);
 
   const handlePickLocationStart = () => {
     setShowAddBakeryModal(false);
@@ -203,11 +195,9 @@ export const MapPage: React.FC = () => {
   const handleSaveBakery = async (bakeryData: BakeryDto) => {
     try {
       const response = await createBakery(bakeryData).unwrap();
-
       notify(t("bakery_added_success"), "success");
       setShowAddBakeryModal(false);
       setTempLocation(null);
-
       if (response && response.id) {
         navigate(`/menu/${response.id}`);
       }
@@ -235,7 +225,6 @@ export const MapPage: React.FC = () => {
     <div className="map-page-container">
       <Toaster
         position="top-center"
-        reverseOrder={false}
         containerStyle={{
           top: 40,
           left: 20,
@@ -256,6 +245,7 @@ export const MapPage: React.FC = () => {
         onClose={() => setShowNotifications(false)}
         notifications={notificationList}
       />
+
       {isAdmin && !isPickingLocation && (
         <button
           className="admin-add-btn"
@@ -308,12 +298,16 @@ export const MapPage: React.FC = () => {
       />
 
       <MapContainer
-        center={position}
+        center={defaultPosition}
         zoom={zoomLevel}
         style={{ height: "100vh", width: "100%" }}
         zoomControl={false}
       >
-        <MapRecenter position={position} zoom={zoomLevel} />
+        <MapRecenter
+          position={position}
+          zoom={zoomLevel}
+          animate={shouldAnimateMap}
+        />
 
         <MapClickHandler
           isActive={isPickingLocation}
@@ -323,8 +317,6 @@ export const MapPage: React.FC = () => {
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           attribution='© <a href="https://carto.com/">CARTO</a>'
         />
-
-        <MapMarker position={position} />
 
         {tempLocation && <Marker position={tempLocation} icon={tempIcon} />}
 
