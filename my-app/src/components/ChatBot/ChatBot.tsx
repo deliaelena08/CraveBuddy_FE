@@ -3,7 +3,6 @@ import { Send, ArrowLeft, MapPin, RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./Chatbot.css";
 import { useTranslation } from "react-i18next";
-import { getLocalizedCake } from "../../utils/cakeUtils";
 
 type ChatStep = "ASK_CRAVING" | "ASK_ALLERGIES" | "SHOW_RESULTS";
 
@@ -22,6 +21,7 @@ export const Chatbot: React.FC = () => {
 
   const [step, setStep] = useState<ChatStep>("ASK_CRAVING");
   const [userCraving, setUserCraving] = useState("");
+  const [userAllergens, setUserAllergens] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -38,6 +38,72 @@ export const Chatbot: React.FC = () => {
 
   useEffect(() => scrollToBottom(), [messages, isLoading]);
 
+  const executeRecommendation = async (query: string, allergens: string) => {
+    setIsLoading(true);
+    const lang = i18n.language === "ro" ? "ro" : "en";
+    const apiUrl = `http://127.0.0.1:8000/recommend/${lang}`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: query,
+          allergens: allergens,
+          top_k: 3,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Error");
+      }
+
+      const results = data.results || [];
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          text:
+            results.length > 0
+              ? t("chatbot_results_found")
+              : t("chatbot_no_results"),
+          sender: "bot",
+          timestamp: new Date(),
+          recommendations: results,
+        },
+      ]);
+
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 1,
+            text: t("chatbot_try_again_hint"),
+            sender: "bot",
+            timestamp: new Date(),
+          },
+        ]);
+      }, 1000);
+
+      setStep("SHOW_RESULTS");
+    } catch (e: any) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          text: t("chatbot_error_generic"),
+          sender: "bot",
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSend = async () => {
     if (!inputValue.trim()) return;
 
@@ -52,26 +118,15 @@ export const Chatbot: React.FC = () => {
     setInputValue("");
 
     if (step === "SHOW_RESULTS") {
-      setUserCraving(userText);
-      setStep("ASK_ALLERGIES");
-      setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            text: t("chatbot_ask_allergies"),
-            sender: "bot",
-            timestamp: new Date(),
-          },
-        ]);
-      }, 500);
+      const combinedQuery = `${userCraving} ${userText}`;
+      setUserCraving(combinedQuery);
+      await executeRecommendation(combinedQuery, userAllergens);
       return;
     }
 
     if (step === "ASK_CRAVING") {
       setUserCraving(userText);
       setStep("ASK_ALLERGIES");
-
       setTimeout(() => {
         setMessages((prev) => [
           ...prev,
@@ -84,7 +139,6 @@ export const Chatbot: React.FC = () => {
         ]);
       }, 500);
     } else if (step === "ASK_ALLERGIES") {
-      setIsLoading(true);
       const allergens =
         (userText.toLowerCase().includes("nu") ||
           userText.toLowerCase().includes("no")) &&
@@ -92,84 +146,15 @@ export const Chatbot: React.FC = () => {
           ? ""
           : userText;
 
-      const lang = i18n.language === "ro" ? "ro" : "en";
-      const apiUrl = `http://127.0.0.1:8000/recommend/${lang}`;
-
-      try {
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query: userCraving,
-            allergens: allergens,
-            top_k: 3,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.detail || "Eroare necunoscută");
-        }
-
-        const results = data.results || [];
-
-        let botText =
-          results.length > 0
-            ? t("chatbot_results_found")
-            : t("chatbot_no_results");
-
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            text: botText,
-            sender: "bot",
-            timestamp: new Date(),
-            recommendations: results,
-          },
-        ]);
-
-        setTimeout(() => {
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: Date.now() + 1,
-              text: t("chatbot_try_again_hint"),
-              sender: "bot",
-              timestamp: new Date(),
-            },
-          ]);
-        }, 1000);
-
-        setStep("SHOW_RESULTS");
-      } catch (e: any) {
-        console.error(e);
-        let errorMsg = t("chatbot_error_generic");
-
-        if (e.message && e.message.includes("AI-ul este gol")) {
-          errorMsg = t("chatbot_error_sync");
-        }
-
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            text: errorMsg,
-            sender: "bot",
-            timestamp: new Date(),
-          },
-        ]);
-        setStep("ASK_CRAVING");
-      } finally {
-        setIsLoading(false);
-      }
+      setUserAllergens(allergens);
+      await executeRecommendation(userCraving, allergens);
     }
   };
 
   const handleRestart = () => {
     setStep("ASK_CRAVING");
     setUserCraving("");
+    setUserAllergens("");
     setMessages([
       {
         id: Date.now(),
@@ -191,11 +176,9 @@ export const Chatbot: React.FC = () => {
           <ArrowLeft size={20} />
         </button>
         <h3>CraveBuddy AI</h3>
-        {step === "SHOW_RESULTS" && (
-          <button className="restart-header-btn" onClick={handleRestart}>
-            <RotateCcw size={20} />
-          </button>
-        )}
+        <button className="restart-header-btn" onClick={handleRestart}>
+          <RotateCcw size={20} />
+        </button>
       </div>
 
       <div className="chatbot-messages">
@@ -210,27 +193,25 @@ export const Chatbot: React.FC = () => {
             </div>
             {msg.recommendations && (
               <div className="recommendations-list">
-                {msg.recommendations.map((result: any) => {
-                  return (
-                    <div key={result.id} className="cake-card">
-                      <div className="cake-info">
-                        <h4>{result.name || "Unknown Cake"}</h4>
-                        <span className="cake-score">
-                          {Math.round(result.score * 100)}% Match
-                        </span>
-                      </div>
-                      <p className="cake-desc">
-                        {result.ingredients || "No ingredients available"}
-                      </p>
-                      <button
-                        className="find-location-btn"
-                        onClick={() => handleGoToLocation(result.id)}
-                      >
-                        <MapPin size={16} /> {t("find_location")}
-                      </button>
+                {msg.recommendations.map((result: any) => (
+                  <div key={result.id} className="cake-card">
+                    <div className="cake-info">
+                      <h4>{result.name || "Unknown Cake"}</h4>
+                      <span className="cake-score">
+                        {Math.round(result.score * 100)}% Match
+                      </span>
                     </div>
-                  );
-                })}
+                    <p className="cake-desc">
+                      {result.ingredients || "No ingredients available"}
+                    </p>
+                    <button
+                      className="find-location-btn"
+                      onClick={() => handleGoToLocation(result.id)}
+                    >
+                      <MapPin size={16} /> {t("find_location")}
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
