@@ -341,3 +341,40 @@
   height: 16px;
   color: white;
 }
+
+.edit-item-btn {
+  position: absolute;
+  top: -12px;
+  right: 28px;
+  width: 32px;
+  height: 32px;
+  background-color: #6d4c41;
+  border: 2px solid white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.menu-item-wrapper:hover .edit-item-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.edit-item-btn:hover {
+  background-color: #b99470;
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.edit-item-btn svg {
+  width: 16px;
+  height: 16px;
+  color: white;
+}

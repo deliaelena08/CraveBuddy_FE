@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./AddBakeryModal.css";
 import { useTranslation } from "react-i18next";
 import { CakeDto } from "../../entities/cake/CakeDto";
@@ -6,6 +6,7 @@ import { translateText } from "../../utils/translator";
 import { Sparkles } from "lucide-react";
 
 export interface NewMenuItemData {
+  id?: number;
   cake: CakeDto;
   price: number;
   quantity: number;
@@ -15,19 +16,20 @@ interface AddCakeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (data: NewMenuItemData) => void;
+  initialData?: NewMenuItemData | null;
 }
 
 export const AddCakeModal: React.FC<AddCakeModalProps> = ({
   isOpen,
   onClose,
   onSave,
+  initialData,
 }) => {
   const { t } = useTranslation();
 
   const [inputLang, setInputLang] = useState<"ro" | "en">("ro");
   const [isTranslating, setIsTranslating] = useState(false);
-
-  const [cakeData, setCakeData] = useState<CakeDto>({
+  const getEmptyCakeData = (): CakeDto => ({
     sweetness: 5,
     nameRo: "",
     ingredientsRo: "",
@@ -40,16 +42,31 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
     flavourEn: "",
     provenienceEn: "",
   });
-
+  const [cakeData, setCakeData] = useState<CakeDto>(getEmptyCakeData());
   const [menuData, setMenuData] = useState({
     price: 0,
     quantity: 1,
   });
 
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData) {
+        setCakeData(initialData.cake);
+        setMenuData({
+          price: initialData.price,
+          quantity: initialData.quantity,
+        });
+      } else {
+        setCakeData(getEmptyCakeData());
+        setMenuData({ price: 0, quantity: 1 });
+      }
+    }
+  }, [isOpen, initialData]);
+
   if (!isOpen) return null;
 
   const handleCakeChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setCakeData({ ...cakeData, [e.target.name]: e.target.value });
   };
@@ -68,27 +85,27 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
         translateText(
           source === "ro" ? cakeData.nameRo : cakeData.nameEn!,
           source,
-          target
+          target,
         ),
         translateText(
           source === "ro" ? cakeData.ingredientsRo : cakeData.ingredientsEn!,
           source,
-          target
+          target,
         ),
         translateText(
           source === "ro" ? cakeData.textureRo : cakeData.textureEn!,
           source,
-          target
+          target,
         ),
         translateText(
           source === "ro" ? cakeData.flavourRo : cakeData.flavourEn!,
           source,
-          target
+          target,
         ),
         translateText(
           source === "ro" ? cakeData.provenienceRo : cakeData.provenienceEn!,
           source,
-          target
+          target,
         ),
       ]);
 
@@ -112,8 +129,8 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
       alert(t("fill_ro_first") || "Please fill the name!");
       return;
     }
-
     onSave({
+      id: initialData?.id,
       cake: cakeData,
       price: menuData.price,
       quantity: menuData.quantity,

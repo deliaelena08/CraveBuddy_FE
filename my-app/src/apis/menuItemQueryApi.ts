@@ -40,6 +40,21 @@ export const menuItemQueryApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [{ type: "menuitems" }],
     }),
+
+    updateMenuItem: builder.mutation<
+      MenuItemDto,
+      { id: number; data: MenuItemDto }
+    >({
+      query: ({ id, data }) => ({
+        url: `${menuItemsBaseUrl}/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "menuitems", id },
+        "menuitems",
+      ],
+    }),
   }),
   overrideExisting: false,
 });
@@ -51,4 +66,5 @@ export const {
   useGetMenuItemsByBakeryIdQuery,
   useGetMenuItemsByCakeIdQuery,
   useGetMenuItemsQuery,
+  useUpdateMenuItemMutation,
 } = menuItemQueryApi;

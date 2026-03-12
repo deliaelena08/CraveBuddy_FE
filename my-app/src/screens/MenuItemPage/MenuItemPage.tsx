@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import "./MenuItemPage.css";
-import { ArrowLeft, Search, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Search, Plus, Trash2, Edit2 } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MenuItemDto } from "../../entities/menuItem/MenuItemDto";
 import {
   useGetMenuItemsByBakeryIdQuery,
   useCreateMenuItemMutation,
   useDeleteMenuItemMutation,
+  useUpdateMenuItemMutation,
 } from "../../apis/menuItemQueryApi";
 import { useCreateCakeMutation } from "../../apis/cakeQueryApi";
 import { MenuItemCard } from "../../components/MenuItemCard/MenuItemCard";
@@ -41,18 +42,18 @@ export const MenuPage: React.FC = () => {
 
   const [createCake] = useCreateCakeMutation();
   const [createMenuItem] = useCreateMenuItemMutation();
+  const [updateMenuItem] = useUpdateMenuItemMutation();
   const [deleteMenuItem] = useDeleteMenuItemMutation();
 
   const bakeryName = location.state?.bakeryName;
   const [searchTerm, setSearchTerm] = useState("");
+
   const [showAddCakeModal, setShowAddCakeModal] = useState(false);
+  const [editingItem, setEditingItem] = useState<NewMenuItemData | null>(null);
 
   const userStr = localStorage.getItem("user");
   const storedUser = userStr ? JSON.parse(userStr) : null;
   const isAdmin = storedUser?.role === "ADMIN";
-
-  const currentBakeryOwnerId =
-    menuItems && menuItems.length > 0 ? menuItems[0].bakery?.ownerId : null;
 
   const isBakeryOwner =
     storedUser?.role === "OWNER" &&
@@ -64,25 +65,56 @@ export const MenuPage: React.FC = () => {
     navigate(-1);
   };
 
+  const handleAddNewClick = () => {
+    setEditingItem(null);
+    setShowAddCakeModal(true);
+  };
+
+  const handleEditClick = (item: MenuItemDto) => {
+    setEditingItem({
+      id: item.id,
+      cake: item.cake,
+      price: item.price,
+      quantity: item.quantity,
+    });
+    setShowAddCakeModal(true);
+  };
+
   const handleSaveMenuItem = async (data: NewMenuItemData) => {
     if (!parsedBakeryId) return;
 
     try {
-      const savedCake = await createCake(data.cake).unwrap();
-      const newMenuItem: MenuItemDto = {
-        cake: savedCake,
-        bakery: { id: parsedBakeryId } as BakeryDto,
-        price: data.price,
-        quantity: data.quantity,
-      };
+      if (data.id) {
+        const updateData: MenuItemDto = {
+          id: data.id,
+          cake: data.cake,
+          bakery: { id: parsedBakeryId } as BakeryDto,
+          price: data.price,
+          quantity: data.quantity,
+        };
 
-      await createMenuItem(newMenuItem).unwrap();
+        await updateMenuItem({ id: data.id, data: updateData }).unwrap();
+        notify(
+          t("cake_updated_success", "Menu item updated successfully!"),
+          "success",
+        );
+      } else {
+        const savedCake = await createCake(data.cake).unwrap();
+        const newMenuItem: MenuItemDto = {
+          cake: savedCake,
+          bakery: { id: parsedBakeryId } as BakeryDto,
+          price: data.price,
+          quantity: data.quantity,
+        };
+        await createMenuItem(newMenuItem).unwrap();
+        notify(t("cake_added_success"), "success");
+      }
 
-      notify(t("cake_added_success"), "success");
       setShowAddCakeModal(false);
+      setEditingItem(null);
     } catch (err) {
-      console.error("Error creating menu item chain:", err);
-      notify(t("cake_add_error"), "error");
+      console.error("Error saving menu item:", err);
+      notify(t("error_generic"), "error");
     }
   };
 
@@ -183,7 +215,7 @@ export const MenuPage: React.FC = () => {
         {canEditMenu && (
           <button
             className="admin-add-cake-btn"
-            onClick={() => setShowAddCakeModal(true)}
+            onClick={handleAddNewClick}
             title={t("add_cake_title")}
           >
             <Plus size={24} color="white" />
@@ -192,8 +224,12 @@ export const MenuPage: React.FC = () => {
 
         <AddCakeModal
           isOpen={showAddCakeModal}
-          onClose={() => setShowAddCakeModal(false)}
+          onClose={() => {
+            setShowAddCakeModal(false);
+            setEditingItem(null);
+          }}
           onSave={handleSaveMenuItem}
+          initialData={editingItem}
         />
 
         {filteredMenuItems && filteredMenuItems.length > 0 ? (
@@ -203,13 +239,23 @@ export const MenuPage: React.FC = () => {
                 <MenuItemCard menuItem={menuItem} />
 
                 {canEditMenu && (
-                  <button
-                    className="delete-item-btn"
-                    onClick={() => handleDeleteMenuItem(menuItem.id!)}
-                    title="Delete Item"
-                  >
-                    <Trash2 size={18} color="white" />
-                  </button>
+                  <>
+                    <button
+                      className="edit-item-btn"
+                      onClick={() => handleEditClick(menuItem)}
+                      title="Edit Item"
+                    >
+                      <Edit2 size={16} color="white" />
+                    </button>
+
+                    <button
+                      className="delete-item-btn"
+                      onClick={() => handleDeleteMenuItem(menuItem.id!)}
+                      title="Delete Item"
+                    >
+                      <Trash2 size={16} color="white" />
+                    </button>
+                  </>
                 )}
               </div>
             ))}
