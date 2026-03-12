@@ -130,6 +130,9 @@ export const MapPage: React.FC = () => {
     });
 
   const isAdmin = currentUser.role === "ADMIN";
+  const isOwner = currentUser.role === "OWNER";
+  const canAddBakery = isAdmin || isOwner;
+
   const displayedBakeries = showFavouritesOnly
     ? bakeries.filter((b) => favourites.some((fav) => fav.bakery.id === b.id))
     : bakeries;
@@ -182,7 +185,7 @@ export const MapPage: React.FC = () => {
     setIsPickingLocation(true);
     notify(
       t("click_map_hint") || "Click on the map to select location",
-      "info"
+      "info",
     );
   };
 
@@ -194,7 +197,10 @@ export const MapPage: React.FC = () => {
 
   const handleSaveBakery = async (bakeryData: BakeryDto) => {
     try {
-      const response = await createBakery(bakeryData).unwrap();
+      const response = await createBakery({
+        ...bakeryData,
+        ownerId: currentUser.id,
+      }).unwrap();
       notify(t("bakery_added_success"), "success");
       setShowAddBakeryModal(false);
       setTempLocation(null);
@@ -246,7 +252,7 @@ export const MapPage: React.FC = () => {
         notifications={notificationList}
       />
 
-      {isAdmin && !isPickingLocation && (
+      {canAddBakery && !isPickingLocation && (
         <button
           className="admin-add-btn"
           onClick={() => setShowAddBakeryModal(true)}
@@ -322,7 +328,7 @@ export const MapPage: React.FC = () => {
 
         {displayedBakeries.map((b: BakeryDto) => {
           const userFavourite = favourites.find(
-            (fav) => fav.bakery.id === b.id
+            (fav) => fav.bakery.id === b.id,
           );
 
           return (

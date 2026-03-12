@@ -36,6 +36,7 @@ export const SidebarMenu: React.FC<SidebarMenuProps> = ({
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
   const isAdmin = user?.role === "ADMIN";
+  const isOwner = user?.role === "OWNER";
 
   const handleLogout = async () => {
     try {
@@ -101,7 +102,16 @@ export const SidebarMenu: React.FC<SidebarMenuProps> = ({
               <MessageOutlined className="icon" />
               <span className="label">{t("chatbot")}</span>
             </div>
-
+            {isOwner && (
+              <div
+                className={`menu-item ${isActive("/my-bakeries") ? "active" : ""}`}
+                title={t("my_bakeries", "My Bakeries")}
+                onClick={() => navigate("/my-bakeries")}
+              >
+                <ShopOutlined className="icon" />
+                <span className="label">{t("my_bakeries", "My Bakeries")}</span>
+              </div>
+            )}
             <div
               className={`menu-item ${isShowingFavourites ? "active" : ""}`}
               title={t("favourites")}

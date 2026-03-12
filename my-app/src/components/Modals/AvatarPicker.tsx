@@ -30,7 +30,7 @@ export const AvatarPicker: React.FC<AvatarPickerProps> = ({
           ))}
         </div>
         <button onClick={onClose} className="close-button">
-          t("close")
+          {t("close")}
         </button>
       </div>
     </div>

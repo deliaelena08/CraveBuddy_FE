@@ -129,5 +129,11 @@
   "edit": "Editează",
   "delete": "Șterge",
   "edit_bakery_title": "Editează Brutăria",
-  "bakery_updated_success": "Brutăria a fost actualizată cu succes!"
+  "bakery_updated_success": "Brutăria a fost actualizată cu succes!",
+  "my_bakeries": "Cofetăriile Mele",
+  "no_bakeries_found": "Încă nu ai nicio cofetărie adăugată.",
+  "add_bakery_hint_map": "Întoarce-te la hartă și apasă butonul + pentru a adăuga una.",
+  "confirm_delete_bakery": "Sigur vrei să ștergi această cofetărie?",
+  "bakery_deleted_success": "Cofetăria a fost ștearsă cu succes!",
+  "manage_locations": "Gestionează-ți locațiile și meniurile"
 }

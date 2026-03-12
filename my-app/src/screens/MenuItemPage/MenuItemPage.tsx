@@ -17,6 +17,7 @@ import {
 } from "../../components/Modals/AddCakeModal";
 import { useNotificationSystem } from "../../utils/useNotificationSystem";
 import { BakeryDto } from "../../entities/bakery/BakeryDto";
+import { useGetBakeriesQuery } from "../../apis/bakeryQueryApi";
 
 export const MenuPage: React.FC = () => {
   const { bakeryId } = useParams<{ bakeryId: string }>();
@@ -26,6 +27,9 @@ export const MenuPage: React.FC = () => {
   const { notify } = useNotificationSystem();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { data: allBakeries = [] } = useGetBakeriesQuery();
+  const currentBakery = allBakeries.find((b) => b.id === parsedBakeryId);
 
   const {
     data: menuItems,
@@ -46,6 +50,15 @@ export const MenuPage: React.FC = () => {
   const userStr = localStorage.getItem("user");
   const storedUser = userStr ? JSON.parse(userStr) : null;
   const isAdmin = storedUser?.role === "ADMIN";
+
+  const currentBakeryOwnerId =
+    menuItems && menuItems.length > 0 ? menuItems[0].bakery?.ownerId : null;
+
+  const isBakeryOwner =
+    storedUser?.role === "OWNER" &&
+    currentBakery &&
+    storedUser.id === currentBakery.ownerId;
+  const canEditMenu = isAdmin || isBakeryOwner;
 
   const handleBack = () => {
     navigate(-1);
@@ -167,7 +180,7 @@ export const MenuPage: React.FC = () => {
           </div>
         </div>
 
-        {isAdmin && (
+        {canEditMenu && (
           <button
             className="admin-add-cake-btn"
             onClick={() => setShowAddCakeModal(true)}
@@ -189,7 +202,7 @@ export const MenuPage: React.FC = () => {
               <div key={menuItem.id} className="menu-item-wrapper">
                 <MenuItemCard menuItem={menuItem} />
 
-                {isAdmin && (
+                {canEditMenu && (
                   <button
                     className="delete-item-btn"
                     onClick={() => handleDeleteMenuItem(menuItem.id!)}

@@ -25,12 +25,21 @@ export const BakeryListPage: React.FC = () => {
   const { notify } = useNotificationSystem();
   const navigate = useNavigate();
 
-  const { data: bakeries = [], isLoading, error } = useGetBakeriesQuery();
+  const userStr = localStorage.getItem("user");
+  const storedUser = userStr ? JSON.parse(userStr) : null;
+  const isAdmin = storedUser?.role === "ADMIN";
+  const currentUserId = storedUser?.id;
+
+  const { data: allBakeries = [], isLoading, error } = useGetBakeriesQuery();
   const [deleteBakery] = useDeleteBakeryMutation();
   const [updateBakery] = useUpdateBakeryMutation();
 
   const [editingBakery, setEditingBakery] = useState<BakeryDto | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const displayedBakeries = isAdmin
+    ? allBakeries
+    : allBakeries.filter((bakery) => bakery.ownerId === currentUserId);
 
   const handleDelete = async (id: number) => {
     if (window.confirm(t("confirm_delete_bakery") || "Delete bakery?")) {
@@ -46,14 +55,6 @@ export const BakeryListPage: React.FC = () => {
 
   const handleSeeMenu = (bakeryId: number, bakeryName: string) => {
     navigate(`/menu/${bakeryId}`, { state: { bakeryName } });
-  };
-
-  const handleGoToAdd = () => {
-    notify(
-      t("add_bakery_hint_map") || "Please use the map to add a bakery!",
-      "info"
-    );
-    navigate("/home-map");
   };
 
   const handleEditClick = (bakery: BakeryDto) => {
@@ -79,8 +80,12 @@ export const BakeryListPage: React.FC = () => {
       <div className="bakery-list-content">
         <div className="list-header-modern">
           <div className="header-text">
-            <h1 className="page-title">{t("bakeries_list")}</h1>
-            <p className="page-subtitle">Manage your locations & menus</p>
+            <h1 className="page-title">
+              {isAdmin ? t("bakeries_list") : t("my_bakeries", "My Bakeries")}
+            </h1>
+            <p className="page-subtitle">
+              {t("manage_locations", "Manage your locations & menus")}
+            </p>
           </div>
 
           <div className="header-actions">
@@ -97,8 +102,26 @@ export const BakeryListPage: React.FC = () => {
         {isLoading && <div className="loading-spinner"></div>}
         {error && <p className="error-text">{t("error_generic")}</p>}
 
+        {!isLoading && !error && displayedBakeries.length === 0 && (
+          <div
+            className="no-bakeries-message"
+            style={{ textAlign: "center", marginTop: "50px", color: "#6d4c41" }}
+          >
+            <Store size={48} style={{ opacity: 0.5, marginBottom: "15px" }} />
+            <h3>
+              {t("no_bakeries_found", "You don't have any bakeries yet.")}
+            </h3>
+            <p>
+              {t(
+                "add_bakery_hint_map",
+                "Go back to the map and click the + button to add one.",
+              )}
+            </p>
+          </div>
+        )}
+
         <div className="bakeries-grid">
-          {bakeries.map((bakery) => (
+          {displayedBakeries.map((bakery) => (
             <div key={bakery.id} className="bakery-card">
               <div className="bakery-avatar-section">
                 <div className="bakery-avatar-circle">

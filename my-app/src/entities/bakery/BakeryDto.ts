@@ -5,4 +5,5 @@ export interface BakeryDto {
   longitude: number;
   latitude: number;
   address: string;
+  ownerId?: number;
 }
