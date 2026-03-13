@@ -135,5 +135,14 @@
   "add_bakery_hint_map": "Go back to the map and click the + button to add one.",
   "confirm_delete_bakery": "Are you sure you want to delete this bakery?",
   "bakery_deleted_success": "Bakery deleted successfully!",
-  "manage_locations": "Manage your locations & menus"
+  "manage_locations": "Manage your locations & menus",
+  "err_name_req": "The name is required!",
+  "err_ingr_req": "The ingredients list is required!",
+  "err_texture_req": "The texture is required!",
+  "err_flavour_req": "The flavour is required!",
+  "err_price_invalid": "Invalid price!",
+  "err_quantity_invalid": "Invalid quantity!",
+  "err_address_req": "The physical address is required!",
+  "err_city_req": "The city is required!",
+  "err_location_req": "Please select a location on the map!"
 }

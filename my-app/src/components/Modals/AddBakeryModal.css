@@ -102,3 +102,22 @@
   background: #d7b49e;
   color: white;
 }
+
+.bakery-input.input-error {
+  border-color: #e53935;
+  background-color: #fffaf0;
+}
+
+.bakery-input.input-error:focus {
+  box-shadow: 0 0 0 2px rgba(229, 57, 53, 0.2);
+}
+
+.error-text {
+  color: #e53935;
+  font-size: 0.75rem;
+  margin-top: -5px;
+  margin-bottom: 5px;
+  text-align: left;
+  display: block;
+  font-weight: 500;
+}

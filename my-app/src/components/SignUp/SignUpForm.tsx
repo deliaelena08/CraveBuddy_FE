@@ -37,32 +37,10 @@ export const SignUpForm: React.FC = () => {
     setShowAvatarPicker(false);
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   try {
-  //     const result = await registerUser(formData).unwrap();
-  //     localStorage.setItem("token", result.token);
-  //     notify(
-  //       `Welcome, ${result.username}! Account created successfully.`,
-  //       "success"
-  //     );
-  //     console.log("Register result:", result);
-  //     navigate("/home-map");
-  //   } catch (err: any) {
-  //     console.error("Register failed:", err);
-  //     notify("Registration failed. Please try again.", "error");
-  //   }
-  // };
-  // În SignUpForm.tsx
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Facem "traducerea" limbii.
-    let mappedLanguage = Language.EN; // Valoarea default de siguranță
-
-    // Verificăm ce e momentan în formData și convertim în enum-ul pe care îl așteaptă backend-ul
+    let mappedLanguage = Language.EN;
     if (
       formData.language === "Română" ||
       formData.language === "RO" ||
@@ -77,14 +55,12 @@ export const SignUpForm: React.FC = () => {
       mappedLanguage = Language.EN;
     }
 
-    // 2. Creăm obiectul final pe care îl vom trimite, folosind limba mapată
     const dataToSend = {
       ...formData,
       language: mappedLanguage,
     };
 
     try {
-      // 3. Trimitem datele mapate, NU formData-ul brut
       const result = await registerUser(dataToSend).unwrap();
 
       localStorage.setItem("token", result.token);
@@ -96,7 +72,6 @@ export const SignUpForm: React.FC = () => {
       navigate("/home-map");
     } catch (err: any) {
       console.error("Register failed:", err);
-      // E bine să afișăm eroarea exactă venită de la server dacă există, te ajută la debug!
       const errorMessage =
         err?.data?.error || "Registration failed. Please try again.";
       notify(errorMessage, "error");

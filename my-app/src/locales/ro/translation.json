@@ -135,5 +135,14 @@
   "add_bakery_hint_map": "Întoarce-te la hartă și apasă butonul + pentru a adăuga una.",
   "confirm_delete_bakery": "Sigur vrei să ștergi această cofetărie?",
   "bakery_deleted_success": "Cofetăria a fost ștearsă cu succes!",
-  "manage_locations": "Gestionează-ți locațiile și meniurile"
+  "manage_locations": "Gestionează-ți locațiile și meniurile",
+  "err_name_req": "Numele este obligatoriu!",
+  "err_ingr_req": "Lista de ingrediente este obligatorie!",
+  "err_texture_req": "Textura este obligatorie!",
+  "err_flavour_req": "Aroma este obligatorie!",
+  "err_price_invalid": "Preț invalid!",
+  "err_quantity_invalid": "Cantitate invalidă!",
+  "err_address_req": "Adresa fizică este obligatorie!",
+  "err_city_req": "Orașul este obligatoriu!",
+  "err_location_req": "Vă rugăm să alegeți locația pe hartă!"
 }

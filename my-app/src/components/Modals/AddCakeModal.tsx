@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./AddBakeryModal.css";
+import "./AddCakeModal.css";
 import { useTranslation } from "react-i18next";
 import { CakeDto } from "../../entities/cake/CakeDto";
 import { translateText } from "../../utils/translator";
@@ -29,6 +29,9 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
 
   const [inputLang, setInputLang] = useState<"ro" | "en">("ro");
   const [isTranslating, setIsTranslating] = useState(false);
+
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
   const getEmptyCakeData = (): CakeDto => ({
     sweetness: 5,
     nameRo: "",
@@ -42,6 +45,7 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
     flavourEn: "",
     provenienceEn: "",
   });
+
   const [cakeData, setCakeData] = useState<CakeDto>(getEmptyCakeData());
   const [menuData, setMenuData] = useState({
     price: 0,
@@ -50,6 +54,8 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
+      setErrors({});
+
       if (initialData) {
         setCakeData(initialData.cake);
         setMenuData({
@@ -68,11 +74,21 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
   const handleCakeChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setCakeData({ ...cakeData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setCakeData({ ...cakeData, [name]: value });
+
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   const handleMenuChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMenuData({ ...menuData, [e.target.name]: parseFloat(e.target.value) });
+    const { name, value } = e.target;
+    setMenuData({ ...menuData, [name]: parseFloat(value) });
+
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   const handleAutoTranslate = async () => {
@@ -124,50 +140,88 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
     }
   };
 
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    const nameField = inputLang === "ro" ? "nameRo" : "nameEn";
+    const nameVal = inputLang === "ro" ? cakeData.nameRo : cakeData.nameEn;
+    if (!nameVal || !nameVal.trim()) {
+      newErrors[nameField] = t("err_name_req", "Numele este obligatoriu!");
+    }
+
+    const ingrField = inputLang === "ro" ? "ingredientsRo" : "ingredientsEn";
+    const ingrVal =
+      inputLang === "ro" ? cakeData.ingredientsRo : cakeData.ingredientsEn;
+    if (!ingrVal || !ingrVal.trim()) {
+      newErrors[ingrField] = t(
+        "err_ingr_req",
+        "Ingredientele sunt obligatorii!",
+      );
+    }
+
+    const textField = inputLang === "ro" ? "textureRo" : "textureEn";
+    const textVal =
+      inputLang === "ro" ? cakeData.textureRo : cakeData.textureEn;
+    if (!textVal || !textVal.trim()) {
+      newErrors[textField] = t("err_texture_req", "Textura este obligatorie!");
+    }
+
+    const flavField = inputLang === "ro" ? "flavourRo" : "flavourEn";
+    const flavVal =
+      inputLang === "ro" ? cakeData.flavourRo : cakeData.flavourEn;
+    if (!flavVal || !flavVal.trim()) {
+      newErrors[flavField] = t("err_flavour_req", "Aroma este obligatorie!");
+    }
+
+    if (menuData.price <= 0 || isNaN(menuData.price)) {
+      newErrors.price = t("err_price_invalid", "Preț invalid!");
+    }
+    if (menuData.quantity <= 0 || isNaN(menuData.quantity)) {
+      newErrors.quantity = t("err_quantity_invalid", "Cantitate invalidă!");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = () => {
-    if (!cakeData.nameRo && !cakeData.nameEn) {
-      alert(t("fill_ro_first") || "Please fill the name!");
+    if (!validateForm()) {
       return;
     }
+
     onSave({
       id: initialData?.id,
       cake: cakeData,
       price: menuData.price,
       quantity: menuData.quantity,
     });
+
+    setCakeData(getEmptyCakeData());
+    setMenuData({ price: 0, quantity: 1 });
   };
 
-  return (
-    <div className="add-bakery-overlay">
-      <div
-        className="add-bakery-modal"
-        style={{ maxWidth: "700px", width: "95%" }}
-      >
-        <h3 className="add-bakery-title">{t("add_cake_title")}</h3>
+  const fName = inputLang === "ro" ? "nameRo" : "nameEn";
+  const fIngr = inputLang === "ro" ? "ingredientsRo" : "ingredientsEn";
+  const fText = inputLang === "ro" ? "textureRo" : "textureEn";
+  const fFlav = inputLang === "ro" ? "flavourRo" : "flavourEn";
+  const fProv = inputLang === "ro" ? "provenienceRo" : "provenienceEn";
 
-        <div
-          style={{
-            marginBottom: 15,
-            display: "flex",
-            justifyContent: "center",
-            gap: 10,
-            alignItems: "center",
-          }}
-        >
-          <span style={{ fontSize: "0.9rem", fontWeight: 600 }}>
-            {t("select_input_lang")}
-          </span>
-          <div style={{ display: "flex", gap: 5 }}>
+  return (
+    <div className="add-cake-overlay">
+      <div className="add-cake-modal">
+        <h3 className="add-cake-title">{t("add_cake_title")}</h3>
+
+        <div className="lang-selector-container">
+          <span className="lang-selector-label">{t("select_input_lang")}</span>
+          <div className="lang-selector-buttons">
             <button
-              className={`location-btn ${inputLang === "ro" ? "selected" : ""}`}
-              style={{ padding: "5px 15px" }}
+              className={`lang-btn ${inputLang === "ro" ? "selected" : ""}`}
               onClick={() => setInputLang("ro")}
             >
               RO 🇷🇴
             </button>
             <button
-              className={`location-btn ${inputLang === "en" ? "selected" : ""}`}
-              style={{ padding: "5px 15px" }}
+              className={`lang-btn ${inputLang === "en" ? "selected" : ""}`}
               onClick={() => setInputLang("en")}
             >
               EN 🇬🇧
@@ -175,88 +229,84 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
           </div>
         </div>
 
-        <div
-          className="add-bakery-form"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "15px",
-            textAlign: "left",
-          }}
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <h4 style={{ margin: 0, fontSize: "0.9rem", color: "#6d4c41" }}>
+        <div className="add-cake-form">
+          <div className="form-column">
+            <h4 className="column-title">
               {inputLang === "ro" ? "Română (Sursă)" : "English (Source)"}
             </h4>
+
             <input
-              name={inputLang === "ro" ? "nameRo" : "nameEn"}
-              value={inputLang === "ro" ? cakeData.nameRo : cakeData.nameEn}
+              name={fName}
+              value={cakeData[fName as keyof CakeDto] as string}
               onChange={handleCakeChange}
               placeholder={t("cake_name")}
-              className="bakery-input"
+              className={`cake-input ${errors[fName] ? "input-error" : ""}`}
+              maxLength={50}
             />
+            {errors[fName] && (
+              <span className="error-text">{errors[fName]}</span>
+            )}
+
             <textarea
               rows={3}
-              name={inputLang === "ro" ? "ingredientsRo" : "ingredientsEn"}
-              value={
-                inputLang === "ro"
-                  ? cakeData.ingredientsRo
-                  : cakeData.ingredientsEn
-              }
+              name={fIngr}
+              value={cakeData[fIngr as keyof CakeDto] as string}
               onChange={handleCakeChange}
               placeholder={t("ingredients")}
-              className="bakery-input"
+              className={`cake-input ${errors[fIngr] ? "input-error" : ""}`}
+              maxLength={500}
             />
+            {errors[fIngr] && (
+              <span className="error-text">{errors[fIngr]}</span>
+            )}
+
             <input
-              name={inputLang === "ro" ? "textureRo" : "textureEn"}
-              value={
-                inputLang === "ro" ? cakeData.textureRo : cakeData.textureEn
-              }
+              name={fText}
+              value={cakeData[fText as keyof CakeDto] as string}
               onChange={handleCakeChange}
               placeholder={t("texture")}
-              className="bakery-input"
+              className={`cake-input ${errors[fText] ? "input-error" : ""}`}
+              maxLength={500}
             />
+            {errors[fText] && (
+              <span className="error-text">{errors[fText]}</span>
+            )}
+
             <input
-              name={inputLang === "ro" ? "flavourRo" : "flavourEn"}
-              value={
-                inputLang === "ro" ? cakeData.flavourRo : cakeData.flavourEn
-              }
+              name={fFlav}
+              value={cakeData[fFlav as keyof CakeDto] as string}
               onChange={handleCakeChange}
               placeholder={t("flavour")}
-              className="bakery-input"
+              className={`cake-input ${errors[fFlav] ? "input-error" : ""}`}
+              maxLength={500}
             />
+            {errors[fFlav] && (
+              <span className="error-text">{errors[fFlav]}</span>
+            )}
+
             <input
-              name={inputLang === "ro" ? "provenienceRo" : "provenienceEn"}
-              value={
-                inputLang === "ro"
-                  ? cakeData.provenienceRo
-                  : cakeData.provenienceEn
-              }
+              name={fProv}
+              value={cakeData[fProv as keyof CakeDto] as string}
               onChange={handleCakeChange}
               placeholder={t("provenience")}
-              className="bakery-input"
+              className="cake-input"
+              maxLength={255}
             />
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
-              opacity: 0.9,
-            }}
-          >
-            <h4 style={{ margin: 0, fontSize: "0.9rem", color: "#6d4c41" }}>
+          <div className="form-column auto-translate">
+            <h4 className="column-title">
               {inputLang === "ro" ? "English (Auto)" : "Română (Auto)"}
             </h4>
+
             <input
               name={inputLang === "ro" ? "nameEn" : "nameRo"}
               value={inputLang === "ro" ? cakeData.nameEn : cakeData.nameRo}
               onChange={handleCakeChange}
               placeholder="..."
-              className="bakery-input"
+              className="cake-input readonly-input"
               readOnly
-              style={{ background: "#f0f0f0" }}
+              maxLength={50}
             />
             <textarea
               rows={3}
@@ -268,9 +318,9 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
               }
               onChange={handleCakeChange}
               placeholder="..."
-              className="bakery-input"
+              className="cake-input readonly-input"
               readOnly
-              style={{ background: "#f0f0f0" }}
+              maxLength={500}
             />
             <input
               name={inputLang === "ro" ? "textureEn" : "textureRo"}
@@ -279,9 +329,9 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
               }
               onChange={handleCakeChange}
               placeholder="..."
-              className="bakery-input"
+              className="cake-input readonly-input"
               readOnly
-              style={{ background: "#f0f0f0" }}
+              maxLength={500}
             />
             <input
               name={inputLang === "ro" ? "flavourEn" : "flavourRo"}
@@ -290,9 +340,9 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
               }
               onChange={handleCakeChange}
               placeholder="..."
-              className="bakery-input"
+              className="cake-input readonly-input"
               readOnly
-              style={{ background: "#f0f0f0" }}
+              maxLength={500}
             />
             <input
               name={inputLang === "ro" ? "provenienceEn" : "provenienceRo"}
@@ -303,29 +353,16 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
               }
               onChange={handleCakeChange}
               placeholder="..."
-              className="bakery-input"
+              className="cake-input readonly-input"
               readOnly
-              style={{ background: "#f0f0f0" }}
+              maxLength={255}
             />
           </div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "20px",
-            marginTop: "15px",
-            alignItems: "center",
-          }}
-        >
-          <div style={{ flex: 1 }}>
-            <label
-              style={{
-                fontSize: "0.85rem",
-                fontWeight: "bold",
-                color: "#5d4037",
-              }}
-            >
+        <div className="details-row">
+          <div className="detail-item">
+            <label className="detail-label">
               {t("sweetness_level")}: {cakeData.sweetness}
             </label>
             <input
@@ -340,59 +377,37 @@ export const AddCakeModal: React.FC<AddCakeModalProps> = ({
                   sweetness: parseInt(e.target.value),
                 })
               }
-              style={{ width: "100%", accentColor: "#6d4c41" }}
+              className="sweetness-range"
             />
           </div>
-          <div style={{ flex: 1 }}>
-            <label
-              style={{
-                fontSize: "0.85rem",
-                fontWeight: "bold",
-                color: "#5d4037",
-              }}
-            >
-              Price (RON)
-            </label>
+          <div className="detail-item">
+            <label className="detail-label">Price (RON)</label>
             <input
               type="number"
               name="price"
               value={menuData.price}
               onChange={handleMenuChange}
-              className="bakery-input"
+              className={`cake-input ${errors.price ? "input-error" : ""}`}
             />
+            {errors.price && <span className="error-text">{errors.price}</span>}
           </div>
-          <div style={{ flex: 1 }}>
-            <label
-              style={{
-                fontSize: "0.85rem",
-                fontWeight: "bold",
-                color: "#5d4037",
-              }}
-            >
-              Quantity
-            </label>
+          <div className="detail-item">
+            <label className="detail-label">Quantity</label>
             <input
               type="number"
               name="quantity"
               value={menuData.quantity}
               onChange={handleMenuChange}
-              className="bakery-input"
+              className={`cake-input ${errors.quantity ? "input-error" : ""}`}
             />
+            {errors.quantity && (
+              <span className="error-text">{errors.quantity}</span>
+            )}
           </div>
         </div>
 
         <button
-          className="location-btn"
-          style={{
-            width: "100%",
-            marginTop: "15px",
-            background: "linear-gradient(45deg, #d7b49e, #fffaf4)",
-            border: "2px solid #d7b49e",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "8px",
-          }}
+          className="auto-translate-btn"
           onClick={handleAutoTranslate}
           disabled={isTranslating}
         >

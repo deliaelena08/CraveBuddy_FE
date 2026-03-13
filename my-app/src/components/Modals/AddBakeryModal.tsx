@@ -9,6 +9,7 @@ interface AddBakeryModalProps {
   onPickLocation: () => void;
   selectedLocation: { lat: number; lng: number } | null;
   onSave: (bakeryData: BakeryDto) => void;
+  onAutoPin?: (lat: number, lng: number) => void;
 }
 
 export const AddBakeryModal: React.FC<AddBakeryModalProps> = ({
@@ -26,6 +27,8 @@ export const AddBakeryModal: React.FC<AddBakeryModalProps> = ({
     city: "Cluj-Napoca",
   });
 
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
   useEffect(() => {
     if (selectedLocation) {
       setFormData((prev) => ({ ...prev, address: "Se caută adresa..." }));
@@ -33,7 +36,7 @@ export const AddBakeryModal: React.FC<AddBakeryModalProps> = ({
       const fetchAddress = async () => {
         try {
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${selectedLocation.lat}&lon=${selectedLocation.lng}`
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${selectedLocation.lat}&lon=${selectedLocation.lng}`,
           );
           const data = await response.json();
 
@@ -54,6 +57,8 @@ export const AddBakeryModal: React.FC<AddBakeryModalProps> = ({
               address: cleanAddress,
               city: city,
             }));
+
+            setErrors((prev) => ({ ...prev, address: "", city: "" }));
           }
         } catch (error) {
           console.error("Eroare la preluarea adresei:", error);
@@ -65,27 +70,64 @@ export const AddBakeryModal: React.FC<AddBakeryModalProps> = ({
     }
   }, [selectedLocation]);
 
+  const handleClose = () => {
+    setErrors({});
+    setFormData({ name: "", address: "", city: "Cluj-Napoca" });
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = t("err_name_req", "Numele cofetăriei este obligatoriu!");
+    }
+    if (!formData.address.trim()) {
+      newErrors.address = t(
+        "err_address_req",
+        "Adresa fizică este obligatorie!",
+      );
+    }
+    if (!formData.city.trim()) {
+      newErrors.city = t("err_city_req", "Orașul este obligatoriu!");
+    }
+    if (!selectedLocation) {
+      newErrors.location = t(
+        "err_location_req",
+        "Vă rugăm să alegeți locația pe hartă!",
+      );
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = () => {
-    if (!selectedLocation) {
-      alert(t("location_required"));
+    if (!validateForm()) {
       return;
     }
 
     const newBakery: BakeryDto = {
       name: formData.name,
       address: formData.address,
-      latitude: selectedLocation.lng,
-      longitude: selectedLocation.lat,
+      latitude: selectedLocation!.lng,
+      longitude: selectedLocation!.lat,
       city: formData.city || "Cluj-Napoca",
     };
 
     onSave(newBakery);
+    setFormData({ name: "", address: "", city: "Cluj-Napoca" });
   };
 
   return (
@@ -99,37 +141,55 @@ export const AddBakeryModal: React.FC<AddBakeryModalProps> = ({
             placeholder={t("bakery_name")}
             value={formData.name}
             onChange={handleChange}
-            className="bakery-input"
+            className={`bakery-input ${errors.name ? "input-error" : ""}`}
+            maxLength={50}
           />
+          {errors.name && <span className="error-text">{errors.name}</span>}
 
           <input
             name="address"
             placeholder={t("bakery_address")}
             value={formData.address}
             onChange={handleChange}
-            className="bakery-input"
+            className={`bakery-input ${errors.address ? "input-error" : ""}`}
+            maxLength={100}
           />
+          {errors.address && (
+            <span className="error-text">{errors.address}</span>
+          )}
 
           <input
             name="city"
             placeholder={t("bakery_city")}
             value={formData.city}
             onChange={handleChange}
-            className="bakery-input"
+            className={`bakery-input ${errors.city ? "input-error" : ""}`}
+            maxLength={200}
           />
+          {errors.city && <span className="error-text">{errors.city}</span>}
 
           <button
-            className={`location-btn ${selectedLocation ? "selected" : ""}`}
+            className={`location-btn ${selectedLocation ? "selected" : ""} ${errors.location && !selectedLocation ? "input-error" : ""}`}
             onClick={onPickLocation}
+            style={
+              errors.location && !selectedLocation
+                ? { borderColor: "#e53935", color: "#e53935" }
+                : {}
+            }
           >
             {selectedLocation
               ? t("location_selected")
               : t("select_location_btn")}
           </button>
+          {errors.location && !selectedLocation && (
+            <span className="error-text" style={{ textAlign: "center" }}>
+              {errors.location}
+            </span>
+          )}
         </div>
 
         <div className="modal-actions">
-          <button className="modal-btn cancel-btn" onClick={onClose}>
+          <button className="modal-btn cancel-btn" onClick={handleClose}>
             {t("cancel")}
           </button>
           <button className="modal-btn save-btn" onClick={handleSubmit}>
